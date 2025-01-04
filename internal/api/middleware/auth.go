@@ -41,3 +41,16 @@ func ValidateJWT(c *fiber.Ctx) error {
 	}
 	return c.Next()
 }
+
+// ValidateAnyOfTheseRoles validates whether the role in the context is matching with any of the roles passed.
+func ValidateAnyOfTheseRoles(roles ...string) func(*fiber.Ctx) error {
+	return func(c *fiber.Ctx) error {
+		role := c.Locals(cons.Role).(string)
+		for _, r := range roles {
+			if r == role {
+				return c.Next()
+			}
+		}
+		return response.ErrorResponse(403, respcode.Forbidden, fmt.Errorf("role %s is not allowed to access this resource", role)).WriteToJSON(c)
+	}
+}

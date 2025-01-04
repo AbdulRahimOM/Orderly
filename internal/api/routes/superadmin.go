@@ -2,6 +2,7 @@ package routes
 
 import (
 	"orderly/internal/api/middleware"
+	"orderly/internal/domain/constants"
 	"orderly/internal/domain/models"
 	"orderly/internal/infrastructure/di"
 
@@ -11,7 +12,7 @@ import (
 func mountSuperAdminRoutes(app *fiber.App, handlers *di.Handlers) {
 	superAdmin := app.Group("/superAdmin",
 		middleware.ValidateJWT,
-		// middleware.ValidateRole("superadmin"),
+		middleware.ValidateAnyOfTheseRoles(constants.RoleSuperAdmin),
 	)
 
 	admin := superAdmin.Group("/admin")
