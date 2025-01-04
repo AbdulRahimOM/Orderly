@@ -33,8 +33,8 @@ type InvalidField struct {
 	Value       interface{} `json:"value"`
 }
 
-func ErrorResponse(statusCode int, respcode string, err error) Response {
-	return Response{
+func ErrorResponse(statusCode int, respcode string, err error) *Response {
+	return &Response{
 		HttpStatusCode: statusCode,
 		Status:         false,
 		ResponseCode:   respcode,
@@ -42,8 +42,8 @@ func ErrorResponse(statusCode int, respcode string, err error) Response {
 	}
 }
 
-func SuccessResponse(statusCode int, respcode string, data interface{}) Response {
-	return Response{
+func SuccessResponse(statusCode int, respcode string, data interface{}) *Response {
+	return &Response{
 		HttpStatusCode: statusCode,
 		Status:         true,
 		ResponseCode:   respcode,
@@ -51,8 +51,8 @@ func SuccessResponse(statusCode int, respcode string, data interface{}) Response
 	}
 }
 
-func DBErrorResponse(err error) Response {
-	return Response{
+func DBErrorResponse(err error) *Response {
+	return &Response{
 		HttpStatusCode: 500,
 		Status:         false,
 		ResponseCode:   respcode.DbError,
@@ -60,15 +60,15 @@ func DBErrorResponse(err error) Response {
 	}
 }
 
-func InvalidURLParamResponse(param string, err error) Response {
+func InvalidURLParamResponse(param string, err error) *Response {
 	return ErrorResponse(http.StatusBadRequest, respcode.InvalidURLParam, fmt.Errorf("error parsing %v from url: %w", param, err))
 }
 
-func BugResponse(err error) Response {//Development purpose only
+func BugResponse(err error) *Response {//Development purpose only
 	return ErrorResponse(http.StatusInternalServerError, "BUG", fmt.Errorf("bug found, notify BE: %w", err))
 }
 
-func UnauthorizedResponse(err error) Response {
+func UnauthorizedResponse(err error) *Response {
 	return ErrorResponse(http.StatusUnauthorized, respcode.Unauthorized, fmt.Errorf("unauthorized: %w", err))
 }
 

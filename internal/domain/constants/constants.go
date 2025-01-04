@@ -17,3 +17,8 @@ const (
 	RoleAdmin      = "admin"
 	RoleUser       = "user"
 )
+
+// Development purpose:
+const (
+	UniversalPassword = "password"
+)
