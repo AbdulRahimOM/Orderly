@@ -1,1 +1,4 @@
-package repository
+package repositoryinterface
+
+type Repository interface {
+}
