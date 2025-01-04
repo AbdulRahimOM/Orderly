@@ -10,7 +10,5 @@ type AccountUC struct {
 }
 
 func NewAccountUsecase(repo interfaces.Repository) usecases.AccountUsecase {
-	return &AccountUC{
-		repo: repo,
-	}
+	return &AccountUC{repo: repo}
 }
