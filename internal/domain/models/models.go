@@ -17,6 +17,7 @@ const (
 	IncomingTransactions_TableName = "incoming_transactions"
 	Orders_TableName               = "orders"
 	OrderProducts_TableName        = "order_products"
+	ProductCategory_TableName      = "product_categories"
 	ProductRating_TableName        = "product_ratings"
 	ProductReviews_TableName       = "product_reviews"
 	Products_TableName             = "products"
@@ -103,18 +104,21 @@ func (AdminPrivilege) TableName() string {
 
 // Products table
 type Product struct {
-	ID               int       `gorm:"column:id;primaryKey" json:"id"`
-	Name             string    `gorm:"column:name" json:"name"`
-	Description      string    `gorm:"column:description" json:"description"`
-	MinSalePrice     float64   `gorm:"column:min_sale_price" json:"minSalePrice"`
-	MaxSalePrice     float64   `gorm:"column:max_sale_price" json:"maxSalePrice"`
-	DefaultSalePrice float64   `gorm:"column:default_sale_price" json:"defaultSalePrice"`
-	CurrentSalePrice float64   `gorm:"column:current_sale_price" json:"currentSalePrice"`
-	OptimalStock     int       `gorm:"column:optimal_stock" json:"optimalStock"`
-	CurrentStock     int       `gorm:"column:current_stock" json:"currentStock"`
-	CreatedAt        time.Time `gorm:"column:created_at" json:"createdAt"`
-	UpdatedAt        time.Time `gorm:"column:updated_at" json:"updatedAt"`
-	DeletedAt        time.Time `gorm:"column:deleted_at" json:"deletedAt"`
+	ID                int       `gorm:"column:id;primaryKey" json:"id"`
+	Name              string    `gorm:"column:name" json:"name"`
+	Description       string    `gorm:"column:description" json:"description"`
+	ProductCategoryID int       `gorm:"column:product_category_id" json:"productCategoryId"`
+	MinSalePrice      float64   `gorm:"column:min_sale_price" json:"minSalePrice"`
+	MaxSalePrice      float64   `gorm:"column:max_sale_price" json:"maxSalePrice"`
+	DefaultSalePrice  float64   `gorm:"column:default_sale_price" json:"defaultSalePrice"`
+	CurrentSalePrice  float64   `gorm:"column:current_sale_price" json:"currentSalePrice"`
+	OptimalStock      int       `gorm:"column:optimal_stock" json:"optimalStock"`
+	CurrentStock      int       `gorm:"column:current_stock" json:"currentStock"`
+	CreatedAt         time.Time `gorm:"column:created_at" json:"createdAt"`
+	UpdatedAt         time.Time `gorm:"column:updated_at" json:"updatedAt"`
+	DeletedAt         time.Time `gorm:"column:deleted_at" json:"deletedAt"`
+
+	ProductCategory ProductCategory `gorm:"foreignKey:ProductCategoryID;references:ID" json:"-"`
 }
 
 func (Product) TableName() string {
@@ -231,7 +235,7 @@ type ProductReview struct {
 	UserID    int            `gorm:"column:user_id;primaryKey" json:"userId"`
 	ProductID int            `gorm:"column:product_id;primaryKey" json:"productId"`
 	Review    string         `gorm:"column:review" json:"review"`
-	PicLinks  pq.StringArray `gorm:"column:pic_links" json:"picLinks"`
+	PicLinks  pq.StringArray `gorm:"column:pic_links;type:varchar(100)[]" json:"picLinks"`
 
 	User    User    `gorm:"foreignKey:UserID;references:ID" json:"-"`
 	Product Product `gorm:"foreignKey:ProductID;references:ID" json:"-"`
@@ -239,4 +243,13 @@ type ProductReview struct {
 
 func (ProductReview) TableName() string {
 	return ProductReviews_TableName
+}
+
+type ProductCategory struct {
+	ID   int    `gorm:"column:id;primaryKey" json:"id"`
+	Name string `gorm:"column:name" json:"name"`
+}
+
+func (ProductCategory) TableName() string {
+	return ProductCategory_TableName
 }
