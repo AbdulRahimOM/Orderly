@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+	"time"
+
+	"github.com/lib/pq"
+)
 
 const ()
 
@@ -13,6 +17,8 @@ const (
 	IncomingTransactions_TableName = "incoming_transactions"
 	Orders_TableName               = "orders"
 	OrderProducts_TableName        = "order_products"
+	ProductRating_TableName        = "product_ratings"
+	ProductReviews_TableName       = "product_reviews"
 	Products_TableName             = "products"
 	Returns_TableName              = "returns"
 	RefundTransactions_TableName   = "refund_transactions"
@@ -200,10 +206,37 @@ type CartItem struct {
 	Quantity           int     `gorm:"column:quantity" json:"quantity"`
 	PriceWhenPutInCart float64 `gorm:"column:price_when_put_in_cart" json:"priceWhenPutInCart"`
 
-	User    User    `gorm:"foreignKey:UserID;references:ID" json:"user"`
-	Product Product `gorm:"foreignKey:ProductID;references:ID" json:"product"`
+	User    User    `gorm:"foreignKey:UserID;references:ID" json:"-"`
+	Product Product `gorm:"foreignKey:ProductID;references:ID" json:"-"`
 }
 
 func (CartItem) TableName() string {
 	return CartItems_TableName
+}
+
+type ProductRating struct {
+	UserID    int     `gorm:"column:user_id;primaryKey" json:"userId"`
+	ProductID int     `gorm:"column:product_id;primaryKey" json:"productId"`
+	Rating    float64 `gorm:"column:rating" json:"rating"`
+
+	User    User    `gorm:"foreignKey:UserID;references:ID" json:"-"`
+	Product Product `gorm:"foreignKey:ProductID;references:ID" json:"-"`
+}
+
+func (ProductRating) TableName() string {
+	return ProductRating_TableName
+}
+
+type ProductReview struct {
+	UserID    int            `gorm:"column:user_id;primaryKey" json:"userId"`
+	ProductID int            `gorm:"column:product_id;primaryKey" json:"productId"`
+	Review    string         `gorm:"column:review" json:"review"`
+	PicLinks  pq.StringArray `gorm:"column:pic_links" json:"picLinks"`
+
+	User    User    `gorm:"foreignKey:UserID;references:ID" json:"-"`
+	Product Product `gorm:"foreignKey:ProductID;references:ID" json:"-"`
+}
+
+func (ProductReview) TableName() string {
+	return ProductReviews_TableName
 }
