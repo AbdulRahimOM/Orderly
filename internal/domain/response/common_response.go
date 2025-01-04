@@ -51,6 +51,16 @@ func SuccessResponse(statusCode int, respcode string, data interface{}) *Respons
 	}
 }
 
+func CreatedResponse(id int) *Response {
+	return SuccessResponse(http.StatusCreated, respcode.Created, map[string]interface{}{
+		"id": id,
+	})
+}
+
+func InternalServerErrorResponse(err error) *Response {
+	return ErrorResponse(http.StatusInternalServerError, respcode.InternalServerError, fmt.Errorf("internal server error: %w", err))
+}
+
 func DBErrorResponse(err error) *Response {
 	return &Response{
 		HttpStatusCode: 500,

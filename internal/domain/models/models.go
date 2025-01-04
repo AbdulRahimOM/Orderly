@@ -1,9 +1,13 @@
 package models
 
 import (
+	"net/http"
+	"orderly/internal/domain/respcode"
+	"orderly/internal/domain/response"
 	"time"
 
 	"github.com/lib/pq"
+	"gorm.io/gorm"
 )
 
 const ()
@@ -29,15 +33,16 @@ const (
 
 // Users table
 type User struct {
-	ID             int       `gorm:"column:id;primaryKey" json:"id"`
-	Username       string    `gorm:"column:username;unique" json:"username"`
-	HashedPassword string    `gorm:"column:hashed_password" json:"-"`
-	Name           string    `gorm:"column:name" json:"name"`
-	Phone          string    `gorm:"column:phone" json:"phone"`
-	CreatedAt      time.Time `gorm:"column:created_at" json:"createdAt"`
-	UpdatedAt      time.Time `gorm:"column:updated_at" json:"updatedAt"`
-	DeletedAt      time.Time `gorm:"column:deleted_at" json:"deletedAt"`
-	IsBlocked      bool      `gorm:"column:is_blocked;default:false" json:"isBlocked"`
+	ID             int            `gorm:"column:id;primaryKey" json:"id"`
+	Username       string         `gorm:"column:username;unique" json:"username"`
+	HashedPassword string         `gorm:"column:hashed_password" json:"-"`
+	Email          string         `gorm:"column:email;unique" json:"email"`
+	Name           string         `gorm:"column:name" json:"name"`
+	Phone          string         `gorm:"column:phone" json:"phone"`
+	CreatedAt      time.Time      `gorm:"column:created_at" json:"createdAt"`
+	UpdatedAt      time.Time      `gorm:"column:updated_at" json:"updatedAt"`
+	DeletedAt      gorm.DeletedAt `gorm:"index" json:"deletedAt"`
+	IsBlocked      bool           `gorm:"column:is_blocked;default:false" json:"isBlocked"`
 }
 
 func (User) TableName() string {
@@ -65,6 +70,7 @@ func (Address) TableName() string {
 type SuperAdmin struct {
 	ID             int    `gorm:"column:id;primaryKey" json:"id"`
 	Username       string `gorm:"column:username;unique" json:"username"`
+	Email          string `gorm:"column:email;unique" json:"email"`
 	HashedPassword string `gorm:"column:hashed_password" json:"-"`
 }
 
@@ -74,20 +80,32 @@ func (SuperAdmin) TableName() string {
 
 // Admins table
 type Admin struct {
-	ID             int       `gorm:"column:id;primaryKey" json:"id"`
-	Username       string    `gorm:"column:username;unique" json:"username"`
-	HashedPassword string    `gorm:"column:hashed_password" json:"-"`
-	Name           string    `gorm:"column:name" json:"name"`
-	Phone          string    `gorm:"column:phone" json:"phone"`
-	Designation    string    `gorm:"column:designation" json:"designation"`
-	CreatedAt      time.Time `gorm:"column:created_at" json:"createdAt"`
-	UpdatedAt      time.Time `gorm:"column:updated_at" json:"updatedAt"`
-	DeletedAt      time.Time `gorm:"column:deleted_at" json:"deletedAt"`
-	IsBlocked      bool      `gorm:"column:is_blocked;default:false" json:"isBlocked"`
+	ID             int            `gorm:"column:id;primaryKey" json:"id"`
+	Username       string         `gorm:"column:username;unique" json:"username"`
+	HashedPassword string         `gorm:"column:hashed_password" json:"-"`
+	Email          string         `gorm:"column:email;unique" json:"email"`
+	Name           string         `gorm:"column:name" json:"name"`
+	Phone          string         `gorm:"column:phone" json:"phone"`
+	Designation    string         `gorm:"column:designation" json:"designation"`
+	IsBlocked      bool           `gorm:"column:is_blocked;default:false" json:"isBlocked"`
+	CreatedAt      time.Time      `gorm:"column:created_at" json:"createdAt"`
+	UpdatedAt      time.Time      `gorm:"column:updated_at" json:"updatedAt"`
+	DeletedAt      gorm.DeletedAt `gorm:"index" json:"deletedAt"`
 }
 
 func (Admin) TableName() string {
 	return Admins_TableName
+}
+
+func (Admin) GetResponseFromDBError(err error) *response.Response {
+	switch err.Error() {
+	case "ERROR: duplicate key value violates unique constraint \"uni_admins_username\" (SQLSTATE 23505)":
+		return response.ErrorResponse(http.StatusConflict, respcode.USERNAME_ALREADY_EXISTS, err)
+	case "ERROR: duplicate key value violates unique constraint \"uni_admins_email\" (SQLSTATE 23505)":
+		return response.ErrorResponse(http.StatusConflict, respcode.EMAIL_ALREADY_EXISTS, err)
+	default:
+		return response.DBErrorResponse(err)
+	}
 }
 
 // AdminPrivileges table
@@ -104,19 +122,19 @@ func (AdminPrivilege) TableName() string {
 
 // Products table
 type Product struct {
-	ID                int       `gorm:"column:id;primaryKey" json:"id"`
-	Name              string    `gorm:"column:name" json:"name"`
-	Description       string    `gorm:"column:description" json:"description"`
-	ProductCategoryID int       `gorm:"column:product_category_id" json:"productCategoryId"`
-	MinSalePrice      float64   `gorm:"column:min_sale_price" json:"minSalePrice"`
-	MaxSalePrice      float64   `gorm:"column:max_sale_price" json:"maxSalePrice"`
-	DefaultSalePrice  float64   `gorm:"column:default_sale_price" json:"defaultSalePrice"`
-	CurrentSalePrice  float64   `gorm:"column:current_sale_price" json:"currentSalePrice"`
-	OptimalStock      int       `gorm:"column:optimal_stock" json:"optimalStock"`
-	CurrentStock      int       `gorm:"column:current_stock" json:"currentStock"`
-	CreatedAt         time.Time `gorm:"column:created_at" json:"createdAt"`
-	UpdatedAt         time.Time `gorm:"column:updated_at" json:"updatedAt"`
-	DeletedAt         time.Time `gorm:"column:deleted_at" json:"deletedAt"`
+	ID                int            `gorm:"column:id;primaryKey" json:"id"`
+	Name              string         `gorm:"column:name" json:"name"`
+	Description       string         `gorm:"column:description" json:"description"`
+	ProductCategoryID int            `gorm:"column:product_category_id" json:"productCategoryId"`
+	MinSalePrice      float64        `gorm:"column:min_sale_price" json:"minSalePrice"`
+	MaxSalePrice      float64        `gorm:"column:max_sale_price" json:"maxSalePrice"`
+	DefaultSalePrice  float64        `gorm:"column:default_sale_price" json:"defaultSalePrice"`
+	CurrentSalePrice  float64        `gorm:"column:current_sale_price" json:"currentSalePrice"`
+	OptimalStock      int            `gorm:"column:optimal_stock" json:"optimalStock"`
+	CurrentStock      int            `gorm:"column:current_stock" json:"currentStock"`
+	CreatedAt         time.Time      `gorm:"column:created_at" json:"createdAt"`
+	UpdatedAt         time.Time      `gorm:"column:updated_at" json:"updatedAt"`
+	DeletedAt         gorm.DeletedAt `gorm:"index" json:"deletedAt"`
 
 	ProductCategory ProductCategory `gorm:"foreignKey:ProductCategoryID;references:ID" json:"-"`
 }

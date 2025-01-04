@@ -6,9 +6,12 @@ import (
 	"orderly/internal/domain/constants"
 	"orderly/internal/domain/dto"
 	"orderly/internal/domain/models"
+	"orderly/internal/domain/request"
 )
 
-var ErrRecordNotFound = fmt.Errorf("record not found")
+var (
+	ErrRecordNotFound = fmt.Errorf("record not found")
+)
 
 func (r *Repo) GetCredential(ctx context.Context, username string, role string) (*dto.Credentials, error) {
 	var tableName string
@@ -30,4 +33,50 @@ func (r *Repo) GetCredential(ctx context.Context, username string, role string) 
 		return nil, ErrRecordNotFound
 	}
 	return &credentials, nil
+}
+
+func (r *Repo) GetAdmins(ctx context.Context, req *request.GetRequest) ([]dto.AdminInList, error) {
+	var (
+		admins []dto.AdminInList
+		err    error
+	)
+
+	if req.IsDeleted {
+		err = r.db.Table(models.Admins_TableName).Select("id", "name", "phone", "designation", "is_blocked").Where("deleted_at IS NOT NULL").Scan(&admins).Limit(req.Limit).Offset(req.Offset).Error
+	} else {
+		err = r.db.Table(models.Admins_TableName).Select("id", "name", "phone", "designation", "is_blocked").Where("deleted_at IS NULL").Scan(&admins).Limit(req.Limit).Offset(req.Offset).Error
+	}
+	if err != nil {
+		return nil, fmt.Errorf("error getting admins: %v", err)
+	}
+	return admins, nil
+}
+
+func (r *Repo) GetAdminByID(ctx context.Context, id int) (*dto.Admin, error) {
+	var admin dto.Admin
+	result := r.db.Raw(`
+		SELECT 
+			id, name, email, phone, designation, is_blocked, created_at, updated_at, deleted_at, 
+			CASE WHEN deleted_at IS NULL THEN false ELSE true END as is_deleted
+		FROM admins
+		WHERE id = ?
+	`, id).Scan(&admin)
+	if result.Error != nil {
+		return nil, fmt.Errorf("error getting admin: %v", result.Error)
+	}
+	if result.RowsAffected == 0 {
+		return nil, ErrRecordNotFound
+	}
+	return &admin, nil
+}
+
+func (r *Repo) UpdateAdminByID (ctx context.Context, id int, req *request.UpdateAdminReq) error {
+	result := r.db.Table(models.Admins_TableName).Where("id = ?", id).Save(req)
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return ErrRecordNotFound
+	}
+	return nil
 }

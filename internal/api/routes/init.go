@@ -8,11 +8,7 @@ import (
 )
 
 func MountRoutes(app *fiber.App) {
-	handlers:=di.GetHandlers(db.PublicDB)
-	mountLoginRoutes(app,handlers)
-	// for _, val := range app.Stack() {
-	// 	for _, route := range val{
-	// 		fmt.Println(route)
-	// 	}
-	// }
+	handlers := di.GetHandlers(db.PublicDB)
+	mountLoginRoutes(app, handlers)
+	mountSuperAdminRoutes(app, handlers)
 }

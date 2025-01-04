@@ -1,7 +1,7 @@
 package di
 
 import (
-	accounthandler "orderly/internal/api/handler"
+	accounthandler "orderly/internal/api/handler/account"
 	repo "orderly/internal/repository"
 	accountuc "orderly/internal/usecase/account"
 
@@ -15,9 +15,9 @@ type Handlers struct {
 }
 
 func GetHandlers(db *gorm.DB) *Handlers {
-	repo := repo.NewPublicRepository(db)
+	repo := repo.NewRepository(db)
 
-	accountUsecase := accountuc.NewAccountUsecase(repo)
+	accountUsecase := accountuc.NewUsecase(repo)
 
 	accountHandler := accounthandler.NewHandler(accountUsecase)
 
