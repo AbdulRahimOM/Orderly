@@ -8,7 +8,9 @@ import (
 	"orderly/internal/domain/models"
 )
 
-var ErrRecordNotFound = fmt.Errorf("record not found")
+var (
+	ErrRecordNotFound = fmt.Errorf("record not found")
+)
 
 func (r *Repo) GetCredential(ctx context.Context, username string, role string) (*dto.Credentials, error) {
 	var tableName string
@@ -31,3 +33,4 @@ func (r *Repo) GetCredential(ctx context.Context, username string, role string) 
 	}
 	return &credentials, nil
 }
+

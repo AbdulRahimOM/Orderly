@@ -1,7 +1,7 @@
 package di
 
 import (
-	accounthandler "orderly/internal/api/handler"
+	accounthandler "orderly/internal/api/handler/account"
 	repo "orderly/internal/repository"
 	accountuc "orderly/internal/usecase/account"
 

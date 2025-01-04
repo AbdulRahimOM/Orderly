@@ -1,18 +1,21 @@
 package routes
 
 import (
-	"fmt"
+	"orderly/internal/api/middleware"
+	"orderly/internal/infrastructure/di"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-func mountSuperAdminRoutes(app *fiber.App) {
-	superAdmin := app.Group("/superadmin", func(c *fiber.Ctx) error {
-		fmt.Println("SuperAdmin Middleware")
-		return c.Next()
-	})
-	superAdmin.Get("/test", func(c *fiber.Ctx) error {
-		return c.SendString("SuperAdmin Test")
-	})
+func mountSuperAdminRoutes(app *fiber.App, handlers *di.Handlers) {
+	superAdmin := app.Group("/superAdmin",
+		middleware.ValidateJWT,
+		// middleware.ValidateRole("superadmin"),
+	)
+
+	admin := superAdmin.Group("/admin")
+	{
+		admin.Post("", handlers.AccountHandler.CreateAdmin)
+	}
 
 }
