@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"reflect"
 	"orderly/internal/domain/response"
+	"orderly/internal/infrastructure/config"
+	"reflect"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -37,7 +38,9 @@ func BindAndValidateJSONRequest(c *fiber.Ctx, req interface{}) (bool, error) {
 		})
 	}
 
-	fmt.Println("req after validation:", req)
+	if config.Configs.Dev_Mode {
+		fmt.Println("#Dev: Req after validation:", req)
+	}
 	return true, nil
 }
 
@@ -75,7 +78,9 @@ func BindAndValidateArrayJSONRequest(c *fiber.Ctx, req interface{}) (bool, error
 		}
 	}
 
-	fmt.Println("req after validation:", req)
+	if config.Configs.Dev_Mode {
+		fmt.Println("#Dev: Req after validation:", req)
+	}
 	return true, nil
 }
 
@@ -98,7 +103,9 @@ func BindAndValidateURLQueryRequest(c *fiber.Ctx, req interface{}) (bool, error)
 		})
 	}
 
-	fmt.Println("req after validation:", req)
+	if config.Configs.Dev_Mode {
+		fmt.Println("#Dev: Req after validation:", req)
+	}
 	return true, nil
 }
 
@@ -123,7 +130,9 @@ func BindAndValidateFormDataRequest(c *fiber.Ctx, req interface{}) (bool, error)
 		})
 	}
 
-	fmt.Println("req after validation:", req)
+	if config.Configs.Dev_Mode {
+		fmt.Println("#Dev: Req after validation:", req)
+	}
 
 	return true, nil
 }
@@ -139,7 +148,9 @@ func ValidateFormDataRequest(c *fiber.Ctx, req interface{}) (bool, error) {
 		})
 	}
 
-	fmt.Println("req after validation:", req)
+	if config.Configs.Dev_Mode {
+		fmt.Println("#Dev: Req after validation:", req)
+	}
 
 	return true, nil
 }

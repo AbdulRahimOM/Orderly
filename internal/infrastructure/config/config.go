@@ -28,10 +28,9 @@ type PostgresConn struct {
 }
 
 type DevelopmentConfig struct {
-	Dev_InitDbEmpty            bool
 	Dev_AllowUniversalPassword bool
 	Dev_AutoMigrateDbOnStart   bool
-	Dev_AllowSystemEndpoints   bool
+	Dev_Mode                   bool
 }
 
 var (
@@ -64,6 +63,10 @@ func loadConfig() {
 
 	InitialData.SuperAdminUsername = viper.GetString("SUPER_ADMIN_USERNAME")
 	InitialData.SuperAdminPassword = viper.GetString("SUPER_ADMIN_PASSWORD")
+
+	Configs.DevelopmentConfig.Dev_AllowUniversalPassword = viper.GetBool("ALLOW_UNIVERSAL_PASSWORD")
+	Configs.DevelopmentConfig.Dev_AutoMigrateDbOnStart = viper.GetBool("AUTO_MIGRATE_DB_ON_START")
+	Configs.DevelopmentConfig.Dev_Mode = viper.GetBool("DEV_MODE")
 
 	fmt.Println("Envirnment variables loaded successfully")
 }
