@@ -17,6 +17,6 @@ type AccountUC struct {
 	repo *repo.Repo
 }
 
-func NewAccountUsecase(repo *repo.Repo) *AccountUC {
+func NewUsecase(repo *repo.Repo) *AccountUC {
 	return &AccountUC{repo: repo}
 }

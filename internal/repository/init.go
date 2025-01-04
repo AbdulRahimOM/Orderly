@@ -14,6 +14,6 @@ type Repo struct {
 // 	return &Repo{db: db}
 // }
 
-func NewPublicRepository(db *gorm.DB) *Repo {
+func NewRepository(db *gorm.DB) *Repo {
 	return &Repo{db: db}
 }
