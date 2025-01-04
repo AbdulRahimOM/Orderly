@@ -19,10 +19,11 @@ const (
 	UrlParamNotFound     = "URL_PARAM_NOT_FOUND"
 	InvalidFileExtension = "INVALID_FILE_EXTENSION"
 
-	DbError      = "DB_ERROR"
-	AlreadyExist = "DATA ALREADY_EXIST"
-	Duplication  = "DUPLICATION"
-	NotFound     = "NOT_FOUND"
+	DbError              = "DB_ERROR"
+	AlreadyExist         = "DATA ALREADY_EXIST"
+	Duplication          = "DUPLICATION"
+	NotFound             = "NOT_FOUND"
+	UniqueFieldViolation = "UNIQUE_FIELD_VIOLATION"
 
 	Bug = "BUG_IN_BACK_END. REPORT_BUG"
 )

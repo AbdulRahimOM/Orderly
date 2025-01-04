@@ -14,7 +14,7 @@ import (
 const (
 	bindingErrCode      = "BINDING_ERROR"
 	validationErrCode   = "VALIDATION_ERROR"
-	queryBindingErrCode = "URL QUERY BINDING ERROR"
+	queryBindingErrCode = "URL_QUERY_BINDING_ERROR"
 )
 
 // BindAndValidateRequest binds and validates the request.

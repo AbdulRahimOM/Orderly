@@ -87,11 +87,10 @@ type Admin struct {
 	Name           string         `gorm:"column:name" json:"name"`
 	Phone          string         `gorm:"column:phone" json:"phone"`
 	Designation    string         `gorm:"column:designation" json:"designation"`
+	IsBlocked      bool           `gorm:"column:is_blocked;default:false" json:"isBlocked"`
 	CreatedAt      time.Time      `gorm:"column:created_at" json:"createdAt"`
 	UpdatedAt      time.Time      `gorm:"column:updated_at" json:"updatedAt"`
 	DeletedAt      gorm.DeletedAt `gorm:"index" json:"deletedAt"`
-	IsBlocked      bool           `gorm:"column:is_blocked;default:false" json:"isBlocked"`
-	gorm.Model
 }
 
 func (Admin) TableName() string {
