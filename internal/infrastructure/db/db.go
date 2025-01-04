@@ -22,6 +22,21 @@ var (
 	superAdminPassword = config.InitialData.SuperAdminPassword
 	publicTables       = []MigrateTable{
 		&models.SuperAdmin{},
+		&models.Admin{},
+		&models.User{},
+		&models.Address{},
+		&models.AdminPrivilege{},
+
+		&models.CartItem{},
+		&models.IncomingTransaction{},
+		&models.Order{},
+		&models.OrderProduct{},
+		&models.Product{},
+		&models.ProductCategory{},
+		&models.ProductRating{},
+		&models.ProductReview{},
+		&models.Return{},
+		&models.RefundTransaction{},
 	}
 )
 
