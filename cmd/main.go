@@ -7,7 +7,6 @@ import (
 	"orderly/internal/infrastructure/config"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
@@ -24,12 +23,6 @@ func main() {
 		StrictRouting: true,
 	})
 	app.Use(logger.New())
-	app.Use(cors.New(cors.Config{
-		AllowOrigins:     config.Configs.Env.CORSAllowedOrigins,
-		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
-		AllowMethods:     "GET, POST, PUT, DELETE, PATCH",
-		AllowCredentials: true, // Enable credentials for specific origins
-	}))
 
 	// health check
 	app.Get("/health", healthCheck)

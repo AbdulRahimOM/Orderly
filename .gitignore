@@ -27,3 +27,6 @@ vendor/
 .DS_Store 
 
 main
+
+# Debug
+__debug_*
