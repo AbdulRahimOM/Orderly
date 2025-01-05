@@ -17,25 +17,52 @@ const (
 	queryBindingErrCode = "URL_QUERY_BINDING_ERROR"
 )
 
+type customValidation interface {
+	CustomValidation() (responseCode string, err error)
+}
+
+func bindErrResponse(c *fiber.Ctx, err error) (bool, error) {
+	log.Println("error parsing request:", err)
+	return false, response.Response{
+		HttpStatusCode: http.StatusBadRequest,
+		Status:         false,
+		ResponseCode:   bindingErrCode,
+		Error:          err,
+	}.WriteToJSON(c)
+}
+
+func validationErrResponse(c *fiber.Ctx, err []response.InvalidField) (bool, error) {
+	log.Println("error validating request:", err)
+	return false, c.Status(http.StatusBadRequest).JSON(response.ValidationErrorResponse{
+		Status:       false,
+		ResponseCode: validationErrCode,
+		Errors:       err,
+	})
+}
+
+func customValidationErrResponse(c *fiber.Ctx, responseCode string, err error) (bool, error) {
+	return false, response.Response{
+		HttpStatusCode: http.StatusBadRequest,
+		Status:         false,
+		ResponseCode:   responseCode,
+		Error:          err,
+	}.WriteToJSON(c)
+}
+
 // BindAndValidateRequest binds and validates the request.
 // Req should be a pointer to the request struct.
 func BindAndValidateJSONRequest(c *fiber.Ctx, req interface{}) (bool, error) {
 	if err := c.BodyParser(req); err != nil {
-		log.Println("error parsing request:", err)
-		return false, response.Response{
-			HttpStatusCode: http.StatusBadRequest,
-			Status:         false,
-			ResponseCode:   bindingErrCode,
-			Error:          err,
-		}.WriteToJSON(c)
+		return bindErrResponse(c, err)
 	}
 	if err := validateJSONRequestDetailed(req); err != nil {
-		log.Println("error validating request:", err)
-		return false, c.Status(http.StatusBadRequest).JSON(response.ValidationErrorResponse{
-			Status:       false,
-			ResponseCode: validationErrCode,
-			Errors:       err,
-		})
+		return validationErrResponse(c, err)
+	}
+
+	if _, ok := req.(customValidation); ok {
+		if responseCode, err := req.(customValidation).CustomValidation(); err != nil {
+			return customValidationErrResponse(c, responseCode, err)
+		}
 	}
 
 	if config.Configs.Dev_Mode {
@@ -47,13 +74,7 @@ func BindAndValidateJSONRequest(c *fiber.Ctx, req interface{}) (bool, error) {
 // Req should be a pointer to the request struct.
 func BindAndValidateArrayJSONRequest(c *fiber.Ctx, req interface{}) (bool, error) {
 	if err := c.BodyParser(req); err != nil {
-		log.Println("error parsing request:", err)
-		return false, response.Response{
-			HttpStatusCode: http.StatusBadRequest,
-			Status:         false,
-			ResponseCode:   bindingErrCode,
-			Error:          err,
-		}.WriteToJSON(c)
+		return bindErrResponse(c, err)
 	}
 
 	val := reflect.ValueOf(req)
@@ -78,6 +99,12 @@ func BindAndValidateArrayJSONRequest(c *fiber.Ctx, req interface{}) (bool, error
 		}
 	}
 
+	if _, ok := req.(customValidation); ok {
+		if responseCode, err := req.(customValidation).CustomValidation(); err != nil {
+			return customValidationErrResponse(c, responseCode, err)
+		}
+	}
+
 	if config.Configs.Dev_Mode {
 		fmt.Println("#Dev: Req after validation:", req)
 	}
@@ -86,21 +113,16 @@ func BindAndValidateArrayJSONRequest(c *fiber.Ctx, req interface{}) (bool, error
 
 func BindAndValidateURLQueryRequest(c *fiber.Ctx, req interface{}) (bool, error) {
 	if err := c.QueryParser(req); err != nil {
-		log.Println("error parsing request:", err)
-		return false, response.Response{
-			HttpStatusCode: http.StatusBadRequest,
-			Status:         false,
-			ResponseCode:   queryBindingErrCode,
-			Error:          err,
-		}.WriteToJSON(c)
+		return bindErrResponse(c, err)
 	}
 	if err := validateJSONRequestDetailed(req); err != nil {
-		log.Println("error validating request:", err)
-		return false, c.Status(http.StatusBadRequest).JSON(response.ValidationErrorResponse{
-			Status:       false,
-			ResponseCode: validationErrCode,
-			Errors:       err,
-		})
+		return validationErrResponse(c, err)
+	}
+
+	if _, ok := req.(customValidation); ok {
+		if responseCode, err := req.(customValidation).CustomValidation(); err != nil {
+			return customValidationErrResponse(c, responseCode, err)
+		}
 	}
 
 	if config.Configs.Dev_Mode {
@@ -113,21 +135,17 @@ func BindAndValidateURLQueryRequest(c *fiber.Ctx, req interface{}) (bool, error)
 // Req should be a pointer to the request struct.
 func BindAndValidateFormDataRequest(c *fiber.Ctx, req interface{}) (bool, error) {
 	if err := c.BodyParser(req); err != nil {
-		log.Println("error parsing request:", err)
-		return false, response.Response{
-			Status:       false,
-			ResponseCode: bindingErrCode,
-			Error:        err,
-		}.WriteToJSON(c)
+		return bindErrResponse(c, err)
 	}
 
 	if err := validateFormDataRequestDetailed(req); err != nil {
-		log.Println("error validating request:", err)
-		return false, c.Status(http.StatusBadRequest).JSON(response.ValidationErrorResponse{
-			Status:       false,
-			ResponseCode: validationErrCode,
-			Errors:       err,
-		})
+		return validationErrResponse(c, err)
+	}
+
+	if _, ok := req.(customValidation); ok {
+		if responseCode, err := req.(customValidation).CustomValidation(); err != nil {
+			return customValidationErrResponse(c, responseCode, err)
+		}
 	}
 
 	if config.Configs.Dev_Mode {
@@ -140,12 +158,13 @@ func BindAndValidateFormDataRequest(c *fiber.Ctx, req interface{}) (bool, error)
 // Validate form data request
 func ValidateFormDataRequest(c *fiber.Ctx, req interface{}) (bool, error) {
 	if err := validateFormDataRequestDetailed(req); err != nil {
-		log.Println("error validating request:", err)
-		return false, c.Status(http.StatusBadRequest).JSON(response.ValidationErrorResponse{
-			Status:       false,
-			ResponseCode: validationErrCode,
-			Errors:       err,
-		})
+		return validationErrResponse(c, err)
+	}
+
+	if _, ok := req.(customValidation); ok {
+		if responseCode, err := req.(customValidation).CustomValidation(); err != nil {
+			return customValidationErrResponse(c, responseCode, err)
+		}
 	}
 
 	if config.Configs.Dev_Mode {
@@ -154,17 +173,3 @@ func ValidateFormDataRequest(c *fiber.Ctx, req interface{}) (bool, error) {
 
 	return true, nil
 }
-
-// //Validate form data request
-// func ValidateFormDataRequest(c *fiber.Ctx, req interface{}) (bool, error) {
-// 	if err := validateFormDataRequestDetailed(req); err != nil {
-// 		log.Println("error validating request:", err)
-// 		return false, c.Status(http.StatusBadRequest).JSON(response.ValidationErrorResponse{
-// 			Status:       false,
-// 			ResponseCode: validationErrCode,
-// 			Errors:       err,
-// 		})
-// 	}
-
-// 	return true, nil
-// }

@@ -29,7 +29,7 @@ var (
 		&models.Order{},
 		&models.OrderProduct{},
 		&models.Product{},
-		&models.ProductCategory{},
+		&models.Category{},
 		&models.ProductRating{},
 		&models.ProductReview{},
 		&models.Return{},

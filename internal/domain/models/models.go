@@ -20,10 +20,10 @@ const (
 	AdminPrivileges_TableName      = "admin_privileges"
 	Admins_TableName               = "admins"
 	CartItems_TableName            = "cart_items"
+	Category_TableName             = "categories"
 	IncomingTransactions_TableName = "incoming_transactions"
 	Orders_TableName               = "orders"
 	OrderProducts_TableName        = "order_products"
-	ProductCategory_TableName      = "product_categories"
 	ProductRating_TableName        = "product_ratings"
 	ProductReviews_TableName       = "product_reviews"
 	Products_TableName             = "products"
@@ -45,7 +45,7 @@ type User struct {
 	CreatedAt      time.Time      `gorm:"column:created_at;default:CURRENT_TIMESTAMP" json:"createdAt"`
 	UpdatedAt      time.Time      `gorm:"column:updated_at;autoUpdateTime" json:"updatedAt"`
 	DeletedAt      gorm.DeletedAt `gorm:"index" json:"deletedAt"`
-	IsActive	   bool           `gorm:"column:is_active;default:true" json:"isActive"`
+	IsActive       bool           `gorm:"column:is_active;default:true" json:"isActive"`
 }
 
 func (User) TableName() string {
@@ -133,7 +133,7 @@ type Admin struct {
 	Name           string         `gorm:"column:name" json:"name"`
 	Phone          string         `gorm:"column:phone" json:"phone"`
 	Designation    string         `gorm:"column:designation" json:"designation"`
-	IsActive	   bool           `gorm:"column:is_active;default:true" json:"isActive"`
+	IsActive       bool           `gorm:"column:is_active;default:true" json:"isActive"`
 	CreatedAt      time.Time      `gorm:"column:created_at;default:CURRENT_TIMESTAMP" json:"createdAt"`
 	UpdatedAt      time.Time      `gorm:"column:updated_at;autoUpdateTime" json:"updatedAt"`
 	DeletedAt      gorm.DeletedAt `gorm:"index" json:"deletedAt"`
@@ -175,25 +175,38 @@ func (AdminPrivilege) TableName() string {
 
 // Products table
 type Product struct {
-	ID                int            `gorm:"column:id;primaryKey" json:"id"`
-	Name              string         `gorm:"column:name" json:"name"`
-	Description       string         `gorm:"column:description" json:"description"`
-	ProductCategoryID int            `gorm:"column:product_category_id" json:"productCategoryId"`
-	MinSalePrice      float64        `gorm:"column:min_sale_price" json:"minSalePrice"`
-	MaxSalePrice      float64        `gorm:"column:max_sale_price" json:"maxSalePrice"`
-	DefaultSalePrice  float64        `gorm:"column:default_sale_price" json:"defaultSalePrice"`
-	CurrentSalePrice  float64        `gorm:"column:current_sale_price" json:"currentSalePrice"`
-	OptimalStock      int            `gorm:"column:optimal_stock" json:"optimalStock"`
-	CurrentStock      int            `gorm:"column:current_stock" json:"currentStock"`
-	CreatedAt         time.Time      `gorm:"column:created_at;default:CURRENT_TIMESTAMP" json:"createdAt"`
-	UpdatedAt         time.Time      `gorm:"column:updated_at;autoUpdateTime" json:"updatedAt"`
-	DeletedAt         gorm.DeletedAt `gorm:"index" json:"deletedAt"`
+	ID               int            `gorm:"column:id;primaryKey" json:"id"`
+	Name             string         `gorm:"column:name" json:"name"`
+	Description      string         `gorm:"column:description" json:"description"`
+	CategoryID       int            `gorm:"column:category_id" json:"CategoryId"`
+	MinSalePrice     float64        `gorm:"column:min_sale_price" json:"minSalePrice"`
+	MaxSalePrice     float64        `gorm:"column:max_sale_price" json:"maxSalePrice"`
+	BasePrice        float64        `gorm:"column:base_price" json:"basePrice"` //foundational price that serves as a reference for adjustments based on market conditions.
+	CurrentSalePrice float64        `gorm:"column:current_sale_price" json:"currentSalePrice"`
+	OptimalStock     int            `gorm:"column:optimal_stock" json:"optimalStock"` //the ideal amount of stock to have on hand.
+	CurrentStock     int            `gorm:"column:current_stock" json:"currentStock"`
+	CreatedAt        time.Time      `gorm:"column:created_at;default:CURRENT_TIMESTAMP" json:"createdAt"`
+	UpdatedAt        time.Time      `gorm:"column:updated_at;autoUpdateTime" json:"updatedAt"`
+	DeletedAt        gorm.DeletedAt `gorm:"index" json:"deletedAt"`
 
-	ProductCategory ProductCategory `gorm:"foreignKey:ProductCategoryID;references:ID" json:"-"`
+	Category Category `gorm:"foreignKey:CategoryID;references:ID" json:"-"`
 }
 
 func (Product) TableName() string {
 	return Products_TableName
+}
+
+func (m Product) PostTableCreation(db *gorm.DB) error {
+	err := db.Exec(`
+		CREATE UNIQUE INDEX IF NOT EXISTS uni_products_name 
+		ON products (name)
+		WHERE deleted_at IS NULL;
+	`).Error
+	if err != nil {
+		return fmt.Errorf("error creating unique index on products table in name column: %v", err)
+	}
+
+	return nil
 }
 
 // Orders table
@@ -345,11 +358,12 @@ func (ProductReview) TableName() string {
 	return ProductReviews_TableName
 }
 
-type ProductCategory struct {
-	ID   int    `gorm:"column:id;primaryKey" json:"id"`
-	Name string `gorm:"column:name" json:"name"`
+type Category struct {
+	ID        int            `gorm:"column:id;primaryKey" json:"id"`
+	Name      string         `gorm:"column:name" json:"name"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
-func (ProductCategory) TableName() string {
-	return ProductCategory_TableName
+func (Category) TableName() string {
+	return Category_TableName
 }
