@@ -23,7 +23,7 @@ func mountSuperAdminRoutes(app *fiber.App, handlers *di.Handlers) {
 		admin.Put("/:id", handlers.Handler.UpdateAdminByID)
 		admin.Delete("/:id", handlers.Handler.SoftDeleteRecordByUUID(models.Admins_TableName))
 		admin.Patch("/undo-delete/:id", handlers.Handler.UndoSoftDeleteRecordByUUID(models.Admins_TableName))
-		admin.Patch("/block/:id", handlers.Handler.BlockByUUID(models.Admins_TableName))
-		admin.Patch("/unblock/:id", handlers.Handler.UnblockByUUID(models.Admins_TableName))
+		admin.Patch("/activate/:id", handlers.Handler.ActivateByUUID(models.Admins_TableName))
+		admin.Patch("/deactivate/:id", handlers.Handler.DeactivateByUUID(models.Admins_TableName))
 	}
 }

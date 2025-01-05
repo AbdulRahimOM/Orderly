@@ -7,6 +7,7 @@ import (
 	"orderly/internal/domain/request"
 	"orderly/internal/domain/respcode"
 	"orderly/internal/domain/response"
+	"orderly/pkg/utils/email"
 	"orderly/pkg/utils/hashpassword"
 	"orderly/pkg/utils/helper"
 	"time"
@@ -43,6 +44,12 @@ func (uc *Usecase) CreateAdmin(ctx context.Context, req *request.CreateAdminReq)
 		return admin.GetResponseFromDBError(err)
 	}
 
+	// Send email to the admin
+	err = email.SendCredentials(admin.Email, admin.Username, password)
+	if err != nil {
+		return response.InternalServerErrorResponse(fmt.Errorf("error sending email: %v", err))
+	}
+
 	return response.CreatedResponse(admin.ID)
 }
 
@@ -68,4 +75,20 @@ func (uc *Usecase) UpdateAdminByID(ctx context.Context, id string, req *request.
 		return models.Admin{}.GetResponseFromDBError(err)
 	}
 	return response.SuccessResponse(200, respcode.Success, nil)
+}
+
+func (uc *Usecase) GetUsers(ctx context.Context, req *request.GetRequest) *response.Response {
+	users, err := uc.repo.GetUsers(ctx, req)
+	if err != nil {
+		return response.DBErrorResponse(fmt.Errorf("error getting users: %v", err))
+	}
+	return response.SuccessResponse(200, respcode.Success, users)
+}
+
+func (uc *Usecase) GetUserByID(ctx context.Context, id string) *response.Response {
+	user, err := uc.repo.GetUserByID(ctx, id)
+	if err != nil {
+		return response.DBErrorResponse(fmt.Errorf("error getting user: %v", err))
+	}
+	return response.SuccessResponse(200, respcode.Success, user)
 }

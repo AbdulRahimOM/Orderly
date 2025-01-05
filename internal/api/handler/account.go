@@ -44,3 +44,19 @@ func (h *Handler) UpdateAdminByID(c *fiber.Ctx) error {
 	response := h.uc.UpdateAdminByID(c.Context(), id, req)
 	return response.WriteToJSON(c)
 }
+
+func (h *Handler) GetUsers(c *fiber.Ctx) error {
+	req, errResponse := request.GetListRequest(c)
+	if req == nil {
+		return errResponse
+	}
+
+	response := h.uc.GetUsers(c.Context(), req)
+	return response.WriteToJSON(c)
+}
+
+func (h *Handler) GetUserByID(c *fiber.Ctx) error {
+	id := c.Params("id")
+	response := h.uc.GetUserByID(c.Context(), id)
+	return response.WriteToJSON(c)
+}
