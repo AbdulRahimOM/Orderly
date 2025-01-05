@@ -25,5 +25,29 @@ func mountAdminRoutes(app *fiber.App, handlers *di.Handlers) {
 			users.Patch("/undo-delete/:id", handlers.Handler.UndoSoftDeleteRecordByUUID(models.Users_TableName))
 		}
 
+		category:= admin.Group("/category")
+		{
+			category.Post("", handlers.Handler.CreateCategory)
+			category.Get("", handlers.Handler.GetCategories)
+			category.Get("/:id", handlers.Handler.GetCategoryByID)
+			category.Put("/:id", handlers.Handler.UpdateCategoryByID)
+			category.Delete("/:id", handlers.Handler.SoftDeleteRecordByID(models.Category_TableName))
+			category.Patch("/undo-delete/:id", handlers.Handler.UndoSoftDeleteRecordByID(models.Category_TableName))
+		}
+
+		product:= admin.Group("/product")
+		{
+			product.Post("", handlers.Handler.CreateProduct)
+			product.Get("", handlers.Handler.GetProducts)
+			product.Get("/:id", handlers.Handler.GetProductByID)
+			product.Put("/:id", handlers.Handler.UpdateProductByID)
+			product.Delete("/:id", handlers.Handler.SoftDeleteRecordByID(models.Products_TableName))
+			product.Patch("/undo-delete/:id", handlers.Handler.UndoSoftDeleteRecordByID(models.Products_TableName))
+			// product.Get("/stock/:id", handlers.Handler.GetProductStockByID)
+			// product.Patch("/stock/:id", handlers.Handler.UpdateProductStockByID)
+			// product.Patch("/stock/add/:id", handlers.Handler.AddProductStockByID)
+			// product.Patch("/stock/reduce/:id", handlers.Handler.ReduceProductStockByID)
+		}
+
 	}
 }

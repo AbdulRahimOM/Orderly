@@ -25,6 +25,9 @@ func (uc *Usecase) UndoSoftDeleteRecordByID(ctx context.Context, tableName strin
 		if responsecode == respcode.UniqueFieldViolation {
 			return response.ErrorResponse(http.StatusConflict, respcode.UniqueFieldViolation, err)
 		}
+		if responsecode == respcode.NotFound {
+			return response.ErrorResponse(http.StatusNotFound, respcode.NotFound, err)
+		}
 		return response.DBErrorResponse(err)
 	}
 
@@ -63,6 +66,15 @@ func (uc *Usecase) ActivateByUUID(ctx context.Context, tableName string, id stri
 
 func (uc *Usecase) DeactivateByUUID(ctx context.Context, tableName string, id string) *response.Response {
 	err := uc.repo.DeactivateByUUID(ctx, tableName, id)
+	if err != nil {
+		return response.DBErrorResponse(err)
+	}
+
+	return response.SuccessResponse(fiber.StatusOK, respcode.Success, nil)
+}
+
+func (uc *Usecase) HardDeleteRecordByID(ctx context.Context, tableName string, id string) *response.Response {
+	err := uc.repo.HardDeleteRecordByID(ctx, tableName, id)
 	if err != nil {
 		return response.DBErrorResponse(err)
 	}

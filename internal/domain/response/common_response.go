@@ -83,6 +83,10 @@ func UnauthorizedResponse(err error) *Response {
 	return ErrorResponse(http.StatusUnauthorized, respcode.Unauthorized, fmt.Errorf("unauthorized: %w", err))
 }
 
+func NotFoundResponse(itemName string) *Response {
+	return ErrorResponse(http.StatusNotFound, respcode.NotFound, fmt.Errorf("not found: %v", itemName))
+}
+
 func (resp Response) WriteToJSON(c *fiber.Ctx) error {
 	if resp.Error == nil {
 		return c.Status(resp.HttpStatusCode).JSON(resp)

@@ -59,3 +59,11 @@ func (h *Handler) DeactivateByUUID(tableName string) func(c *fiber.Ctx) error {
 		return response.WriteToJSON(c)
 	}
 }
+
+func (h *Handler) HardDeleteRecordByID(tableName string) func(c *fiber.Ctx) error {
+	return func(c *fiber.Ctx) error {
+		id := c.Params("id")
+		response := h.uc.HardDeleteRecordByID(c.Context(), tableName, id)
+		return response.WriteToJSON(c)
+	}
+}
