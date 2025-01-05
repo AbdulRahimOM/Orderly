@@ -7,6 +7,8 @@ import (
 	"orderly/internal/domain/dto"
 	"orderly/internal/domain/models"
 	"orderly/internal/domain/request"
+
+	"github.com/gofiber/fiber/v2/log"
 )
 
 var (
@@ -18,10 +20,13 @@ func (r *Repo) GetCredential(ctx context.Context, username string, role string) 
 	switch role {
 	case constants.RoleSuperAdmin:
 		tableName = models.SuperAdmin_TableName
-		// case "admin":
-		// 	tableName = models.Admin_TableName
-		// case "user":
-		// 	tableName = models.User_TableName
+	case "admin":
+		tableName = models.Admins_TableName
+	case "user":
+		tableName = models.Users_TableName
+	default:
+		log.Error("potential bug: invalid role mentioned in code: %s", role)
+		return nil, fmt.Errorf("potential bug: Invalid role mentioned in code: %s", role)
 	}
 
 	var credentials dto.Credentials
@@ -70,7 +75,7 @@ func (r *Repo) GetAdminByID(ctx context.Context, id int) (*dto.Admin, error) {
 	return &admin, nil
 }
 
-func (r *Repo) UpdateAdminByID (ctx context.Context, id int, req *request.UpdateAdminReq) error {
+func (r *Repo) UpdateAdminByID(ctx context.Context, id int, req *request.UpdateAdminReq) error {
 	result := r.db.Table(models.Admins_TableName).Where("id = ?", id).Save(req)
 	if result.Error != nil {
 		return result.Error

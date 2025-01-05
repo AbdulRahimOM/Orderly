@@ -9,10 +9,6 @@ import (
 	jwt "github.com/golang-jwt/jwt/v5"
 )
 
-const (
-	JwtExpTimeInMinutes = time.Hour * time.Duration(120)
-)
-
 var (
 	ErrTokenExpired        = jwt.ErrTokenExpired
 	ErrTokenIsInvalid      = fmt.Errorf("jwt token is invalid")
@@ -20,9 +16,9 @@ var (
 )
 
 type tokenData struct {
-	Id           int
-	Role         string
-	AddlInfo     interface{}
+	Id       int
+	Role     string
+	AddlInfo interface{}
 }
 
 type CustomClaims struct {
@@ -30,14 +26,14 @@ type CustomClaims struct {
 	jwt.RegisteredClaims
 }
 
-func GenerateToken(id int, role string, schoolPrefix string, addlInfo interface{}) (string, error) {
+func GenerateToken(id int, role string, schoolPrefix string, addlInfo interface{}, JwtExpTimeInMinutes time.Duration) (string, error) {
 
 	//create a custom claim
 	claims := &CustomClaims{
 		tokenData: tokenData{
-			Id:           id,
-			Role:         role,
-			AddlInfo:     addlInfo,
+			Id:       id,
+			Role:     role,
+			AddlInfo: addlInfo,
 		},
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(JwtExpTimeInMinutes)),

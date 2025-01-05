@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"net/http"
 	"orderly/internal/domain/respcode"
 	"orderly/internal/domain/response"
@@ -36,17 +37,40 @@ type User struct {
 	ID             int            `gorm:"column:id;primaryKey" json:"id"`
 	Username       string         `gorm:"column:username;unique" json:"username"`
 	HashedPassword string         `gorm:"column:hashed_password" json:"-"`
-	Email          string         `gorm:"column:email;unique" json:"email"`
+	Email          string         `gorm:"column:email" json:"email"`
 	Name           string         `gorm:"column:name" json:"name"`
 	Phone          string         `gorm:"column:phone" json:"phone"`
-	CreatedAt      time.Time      `gorm:"column:created_at" json:"createdAt"`
-	UpdatedAt      time.Time      `gorm:"column:updated_at" json:"updatedAt"`
+	CreatedAt      time.Time      `gorm:"column:created_at;default:CURRENT_TIMESTAMP" json:"createdAt"`
+	UpdatedAt      time.Time      `gorm:"column:updated_at;autoUpdateTime" json:"updatedAt"`
 	DeletedAt      gorm.DeletedAt `gorm:"index" json:"deletedAt"`
 	IsBlocked      bool           `gorm:"column:is_blocked;default:false" json:"isBlocked"`
+	IsVerified     bool           `gorm:"column:is_verified;default:false" json:"isVerified"`
 }
 
 func (User) TableName() string {
 	return Users_TableName
+}
+
+func (User) PostTableCreation(db *gorm.DB) error {
+	err := db.Raw(`
+		CREATE UNIQUE INDEX IF NOT EXISTS uni_users_email 
+		ON users (email)
+		WHERE deleted_at IS NULL;
+	`).Error
+	if err != nil {
+		return fmt.Errorf("error creating unique index on users table in email column: %v", err)
+	}
+
+	err = db.Raw(`
+		CREATE UNIQUE INDEX IF NOT EXISTS uni_users_phone
+		ON users (phone)
+		WHERE deleted_at IS NULL;
+	`).Error
+	if err != nil {
+		return fmt.Errorf("error creating unique index on users table in phone column: %v", err)
+	}
+
+	return nil
 }
 
 // Addresses table
@@ -88,8 +112,8 @@ type Admin struct {
 	Phone          string         `gorm:"column:phone" json:"phone"`
 	Designation    string         `gorm:"column:designation" json:"designation"`
 	IsBlocked      bool           `gorm:"column:is_blocked;default:false" json:"isBlocked"`
-	CreatedAt      time.Time      `gorm:"column:created_at" json:"createdAt"`
-	UpdatedAt      time.Time      `gorm:"column:updated_at" json:"updatedAt"`
+	CreatedAt      time.Time      `gorm:"column:created_at;default:CURRENT_TIMESTAMP" json:"createdAt"`
+	UpdatedAt      time.Time      `gorm:"column:updated_at;autoUpdateTime" json:"updatedAt"`
 	DeletedAt      gorm.DeletedAt `gorm:"index" json:"deletedAt"`
 }
 
@@ -132,8 +156,8 @@ type Product struct {
 	CurrentSalePrice  float64        `gorm:"column:current_sale_price" json:"currentSalePrice"`
 	OptimalStock      int            `gorm:"column:optimal_stock" json:"optimalStock"`
 	CurrentStock      int            `gorm:"column:current_stock" json:"currentStock"`
-	CreatedAt         time.Time      `gorm:"column:created_at" json:"createdAt"`
-	UpdatedAt         time.Time      `gorm:"column:updated_at" json:"updatedAt"`
+	CreatedAt      time.Time      `gorm:"column:created_at;default:CURRENT_TIMESTAMP" json:"createdAt"`
+	UpdatedAt      time.Time      `gorm:"column:updated_at;autoUpdateTime" json:"updatedAt"`
 	DeletedAt         gorm.DeletedAt `gorm:"index" json:"deletedAt"`
 
 	ProductCategory ProductCategory `gorm:"foreignKey:ProductCategoryID;references:ID" json:"-"`
