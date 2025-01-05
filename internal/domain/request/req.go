@@ -17,6 +17,10 @@ type SigninReq struct {
 	Password string `json:"password" validate:"required"`
 }
 
+type VerifyOTPReq struct {
+	OTP string `json:"otp" validate:"required"`
+}
+
 type UserSignupReq struct {
 	Username string `json:"username" validate:"required"`
 	Email    string `json:"email" validate:"required,email"`

@@ -13,6 +13,7 @@ import (
 	repo "orderly/internal/repository"
 	jwttoken "orderly/pkg/jwt-token"
 	"orderly/pkg/utils/hashpassword"
+	"orderly/pkg/utils/helper"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -144,9 +145,44 @@ func (uc *AccountUC) UserSignUpGetOTP(ctx context.Context, req *request.UserSign
 		return response.InternalServerErrorResponse(fmt.Errorf("error in generating token: %v", err))
 	}
 
+	//send OTP via SMS
+	err = uc.smsOtpClient.SendOtp(user.Phone)
+	if err != nil {
+		return response.InternalServerErrorResponse(fmt.Errorf("error in sending OTP: %v", err))
+	}
+
 	return response.SuccessResponse(http.StatusOK, respcode.Success, map[string]interface{}{
 		"id":              user.ID,
 		"temporary_token": token,
 		"name":            user.Name,
+	})
+}
+
+func (uc *AccountUC) UserSignUpVerifyOTP(ctx context.Context, req *request.VerifyOTPReq) *response.Response {
+	id := helper.GetUserIdFromContext(ctx)
+	userSignInDetails, err := uc.repo.GetUserSignInDetails(ctx, id)
+	if err != nil {
+		return response.DBErrorResponse(err)
+	}
+
+	if userSignInDetails.IsBlocked {
+		return response.ErrorResponse(http.StatusForbidden, "BLOCKED_USER", fmt.Errorf("user is blocked"))
+	}
+	//verify otp
+	if ok, err := uc.smsOtpClient.VerifyOtp(userSignInDetails.Phone, req.OTP); err != nil {
+		return response.InternalServerErrorResponse(fmt.Errorf("error in verifying OTP: %v", err))
+	} else if !ok {
+		return response.UnauthorizedResponse(fmt.Errorf("error in verifying OTP: %v", err))
+	}
+
+	//generate token
+	token, err := jwttoken.GenerateToken(id, constants.RoleUser, "", nil, defaultTokenExpiry)
+	if err != nil {
+		return response.InternalServerErrorResponse(fmt.Errorf("error in generating token: %v", err))
+	}
+
+	return response.SuccessResponse(http.StatusOK, respcode.Success, map[string]interface{}{
+		"token": token,
+		"name":  userSignInDetails.Name,
 	})
 }

@@ -85,3 +85,27 @@ func (r *Repo) UpdateAdminByID(ctx context.Context, id int, req *request.UpdateA
 	}
 	return nil
 }
+
+func (r *Repo) MarkUserAsVerified(ctx context.Context, id int) error {
+	result := r.db.Table(models.Users_TableName).Where("id = ? AND is_blocked = false AND deleted_at IS NULL", id).Update("is_verified", true)
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return ErrRecordNotFound
+	}
+
+	return nil
+}
+
+func (r *Repo) GetUserSignInDetails(ctx context.Context, userID int) (*dto.UserSignInDetails, error) {
+	var user dto.UserSignInDetails
+	result := r.db.Table(models.Users_TableName).Select("name,phone,is_blocked").Where("id = ? AND deleted_at IS NULL", userID).Scan(&user)
+	if result.Error != nil {
+		return nil, fmt.Errorf("error getting user details: %v", result.Error)
+	}
+	if result.RowsAffected == 0 {
+		return nil, ErrRecordNotFound
+	}
+	return &user, nil
+}

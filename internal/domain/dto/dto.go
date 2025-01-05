@@ -32,3 +32,9 @@ type Admin struct {
 	DeletedAt   gorm.DeletedAt `gorm:"index" json:"deletedAt"`
 	IsDeleted   bool           `gorm:"is_deleted" json:"isDeleted"`
 }
+
+type UserSignInDetails struct {
+	Name      string `gorm:"column:name" json:"name"`
+	IsBlocked bool   `gorm:"column:is_blocked" json:"isBlocked"`
+	Phone     string `gorm:"column:phone" json:"phone"`
+}
