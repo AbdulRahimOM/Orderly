@@ -7,6 +7,7 @@ import (
 	"time"
 
 	jwt "github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 )
 
 var (
@@ -16,7 +17,7 @@ var (
 )
 
 type tokenData struct {
-	Id       int
+	Id       uuid.UUID
 	Role     string
 	AddlInfo interface{}
 }
@@ -26,7 +27,7 @@ type CustomClaims struct {
 	jwt.RegisteredClaims
 }
 
-func GenerateToken(id int, role string, schoolPrefix string, addlInfo interface{}, JwtExpTimeInMinutes time.Duration) (string, error) {
+func GenerateToken(id uuid.UUID, role string, addlInfo map[string]interface{}, JwtExpTimeInMinutes time.Duration) (string, error) {
 
 	//create a custom claim
 	claims := &CustomClaims{

@@ -69,8 +69,8 @@ func loadConfig() {
 		log.Fatalln("error occured while writing env values onto variables, error:", err)
 	}
 
-	InitialData.SuperAdminUsername = viper.GetString("SUPER_ADMIN_USERNAME")
-	InitialData.SuperAdminPassword = viper.GetString("SUPER_ADMIN_PASSWORD")
+	InitialData.SuperAdminUsername = viper.GetString("INITIAL_SUPER_ADMIN_USERNAME")
+	InitialData.SuperAdminPassword = viper.GetString("INITIAL_SUPER_ADMIN_PASSWORD")
 
 	fmt.Println("Envirnment variables loaded successfully")
 }

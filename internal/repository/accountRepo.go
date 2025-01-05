@@ -57,7 +57,7 @@ func (r *Repo) GetAdmins(ctx context.Context, req *request.GetRequest) ([]dto.Ad
 	return admins, nil
 }
 
-func (r *Repo) GetAdminByID(ctx context.Context, id int) (*dto.Admin, error) {
+func (r *Repo) GetAdminByID(ctx context.Context, id string) (*dto.Admin, error) {
 	var admin dto.Admin
 	result := r.db.Raw(`
 		SELECT 
@@ -75,7 +75,7 @@ func (r *Repo) GetAdminByID(ctx context.Context, id int) (*dto.Admin, error) {
 	return &admin, nil
 }
 
-func (r *Repo) UpdateAdminByID(ctx context.Context, id int, req *request.UpdateAdminReq) error {
+func (r *Repo) UpdateAdminByID(ctx context.Context, id string, req *request.UpdateAdminReq) error {
 	result := r.db.Table(models.Admins_TableName).Where("id = ?", id).Save(req)
 	if result.Error != nil {
 		return result.Error
@@ -86,7 +86,7 @@ func (r *Repo) UpdateAdminByID(ctx context.Context, id int, req *request.UpdateA
 	return nil
 }
 
-func (r *Repo) MarkUserAsVerified(ctx context.Context, id int) error {
+func (r *Repo) MarkUserAsVerified(ctx context.Context, id string) error {
 	result := r.db.Table(models.Users_TableName).Where("id = ? AND is_blocked = false AND deleted_at IS NULL", id).Update("is_verified", true)
 	if result.Error != nil {
 		return result.Error
@@ -98,7 +98,7 @@ func (r *Repo) MarkUserAsVerified(ctx context.Context, id int) error {
 	return nil
 }
 
-func (r *Repo) GetUserSignInDetails(ctx context.Context, userID int) (*dto.UserSignInDetails, error) {
+func (r *Repo) GetUserSignInDetails(ctx context.Context, userID string) (*dto.UserSignInDetails, error) {
 	var user dto.UserSignInDetails
 	result := r.db.Table(models.Users_TableName).Select("name,phone,is_blocked").Where("id = ? AND deleted_at IS NULL", userID).Scan(&user)
 	if result.Error != nil {
@@ -108,4 +108,28 @@ func (r *Repo) GetUserSignInDetails(ctx context.Context, userID int) (*dto.UserS
 		return nil, ErrRecordNotFound
 	}
 	return &user, nil
+}
+
+//CheckIfUsernameEmailOrPhoneExists(ctx context.Context, username, email, phone string) (usernameExists, emailExists, phoneExists bool, err error)
+func (r *Repo) CheckIfUsernameEmailOrPhoneExistsInUser(ctx context.Context, username, email, phone string) (usernameExists, emailExists, phoneExists bool, err error) {
+	var count int64
+	result := r.db.Table(models.Users_TableName).Where("username = ?", username).Count(&count)
+	if result.Error != nil {
+		return false, false, false, fmt.Errorf("error checking username: %v", result.Error)
+	}
+	usernameExists = count > 0
+
+	result = r.db.Table(models.Users_TableName).Where("email = ?", email).Count(&count)
+	if result.Error != nil {
+		return false, false, false, fmt.Errorf("error checking email: %v", result.Error)
+	}
+	emailExists = count > 0
+
+	result = r.db.Table(models.Users_TableName).Where("phone = ?", phone).Count(&count)
+	if result.Error != nil {
+		return false, false, false, fmt.Errorf("error checking phone: %v", result.Error)
+	}
+	phoneExists = count > 0
+
+	return usernameExists, emailExists, phoneExists, nil
 }

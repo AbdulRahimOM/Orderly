@@ -1,10 +1,10 @@
 package di
 
 import (
-	accounthandler "orderly/internal/api/handler/account"
+	handler "orderly/internal/api/handler"
 	"orderly/internal/infrastructure/config"
 	repo "orderly/internal/repository"
-	accountuc "orderly/internal/usecase/account"
+	uc "orderly/internal/usecase"
 	twilioOTP "orderly/pkg/twilio"
 
 	"gorm.io/gorm"
@@ -13,7 +13,7 @@ import (
 //dependency injection
 
 type Handlers struct {
-	AccountHandler *accounthandler.Handler
+	Handler *handler.Handler
 }
 
 func GetHandlers(db *gorm.DB) *Handlers {
@@ -25,11 +25,11 @@ func GetHandlers(db *gorm.DB) *Handlers {
 		config.Configs.Twilio.ServiceSid,
 		config.Configs.DevelopmentConfig.Dev_BypassOtp,
 	)
-	accountUsecase := accountuc.NewUsecase(repo, twilioClient)
+	accountUsecase := uc.NewUsecase(repo, twilioClient)
 
-	accountHandler := accounthandler.NewHandler(accountUsecase)
+	accountHandler := handler.NewHandler(accountUsecase)
 
 	return &Handlers{
-		AccountHandler: accountHandler,
+		Handler: accountHandler,
 	}
 }

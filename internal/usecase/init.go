@@ -1,4 +1,4 @@
-package accountuc
+package uc
 
 import (
 	repo "orderly/internal/repository"
@@ -16,14 +16,14 @@ import (
 
 type smsOtpClient interface {
 	SendOtp(phoneNumber string) error
-	VerifyOtp(phoneNumber string, otp string) (bool,error)
+	VerifyOtp(phoneNumber string, otp string) (bool, error)
 }
 
-type AccountUC struct {
+type Usecase struct {
 	repo         *repo.Repo
 	smsOtpClient smsOtpClient
 }
 
-func NewUsecase(repo *repo.Repo, smsOtpClient smsOtpClient) *AccountUC {
-	return &AccountUC{repo: repo, smsOtpClient: smsOtpClient}
+func NewUsecase(repo *repo.Repo, smsOtpClient smsOtpClient) *Usecase {
+	return &Usecase{repo: repo, smsOtpClient: smsOtpClient}
 }

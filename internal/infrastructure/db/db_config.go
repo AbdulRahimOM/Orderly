@@ -9,6 +9,35 @@ import (
 	"gorm.io/gorm"
 )
 
+var DB *gorm.DB = GetConnectionToDB()
+
+func init() {
+	if resetDBFlagCalled() { //if resetdb flag is set or INIT_DB_EMPTY env is set to true, then clear the database
+		if err := ClearDB(); err != nil {
+			log.Fatal("Couldn't clear the database. Error:", err)
+		}
+	}
+
+	InitDB() //initialize the public database (create tables and seed super admin)
+}
+
+func InitDB() { //is called in init function
+
+	if config.Configs.Dev_AutoMigrateDbOnStart {
+		migratePublicTables(DB)
+	}
+	initiateSuperAdmin(DB)
+}
+
+func GetConnectionToDB() *gorm.DB {
+	db, err := connectToDB()
+	if err != nil {
+		log.Fatal("Couldn't connect to the database. Error:", err)
+	}
+
+	return db
+}
+
 // ConnectToDB connects to the database and returns the connection.
 // If the database does not exist, it creates it and returns the connection.
 func connectToDB() (*gorm.DB, error) {

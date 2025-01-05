@@ -85,7 +85,7 @@ func (tc *TwilioClient) VerifyOtp(phone string, otp string) (bool, error) {
 				return true, nil
 			default:
 				fmt.Println("OTP verification failed: ", *resp.Status)
-				return false, fmt.Errorf("OTP verification failed")
+				return false, nil
 			}
 		} else {
 			fmt.Println("resp status:", resp.Status)

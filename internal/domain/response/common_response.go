@@ -6,6 +6,7 @@ import (
 	respcode "orderly/internal/domain/respcode"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 )
 
 type Response struct {
@@ -51,7 +52,7 @@ func SuccessResponse(statusCode int, respcode string, data interface{}) *Respons
 	}
 }
 
-func CreatedResponse(id int) *Response {
+func CreatedResponse[T int | uuid.UUID](id T) *Response {
 	return SuccessResponse(http.StatusCreated, respcode.Created, map[string]interface{}{
 		"id": id,
 	})
@@ -74,7 +75,7 @@ func InvalidURLParamResponse(param string, err error) *Response {
 	return ErrorResponse(http.StatusBadRequest, respcode.InvalidURLParam, fmt.Errorf("error parsing %v from url: %w", param, err))
 }
 
-func BugResponse(err error) *Response {//Development purpose only
+func BugResponse(err error) *Response { //Development purpose only
 	return ErrorResponse(http.StatusInternalServerError, "BUG", fmt.Errorf("bug found, notify BE: %w", err))
 }
 

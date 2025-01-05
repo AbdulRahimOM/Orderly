@@ -33,14 +33,33 @@ func (r *Repo) UndoSoftDeleteRecordByID(ctx context.Context, tableName string, i
 	return "", nil
 }
 
-func (r *Repo) BlockByID(ctx context.Context, tableName string, id int) error {
+func (r *Repo) SoftDeleteRecordByUUID(ctx context.Context, tableName string, id string) error {
+	if err := r.db.WithContext(ctx).Table(tableName).Where("id = ?", id).Update("deleted_at", "now()").Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *Repo) UndoSoftDeleteRecordByUUID(ctx context.Context, tableName string, id string) (string, error) {
+	err := r.db.Table(tableName).Where("id = ?", id).Update("deleted_at", nil).Error
+	if err != nil {
+		if strings.Contains(err.Error(), "(SQLSTATE 23505)") {
+			return respcode.UniqueFieldViolation, err
+		}
+		return respcode.DbError, fmt.Errorf("failed to undo soft delete record in table %s: %w", tableName, err)
+	}
+
+	return "", nil
+}
+
+func (r *Repo) BlockByUUID(ctx context.Context, tableName string, id string) error {
 	if err := r.db.WithContext(ctx).Table(tableName).Where("id = ?", id).Update("is_blocked", true).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func (r *Repo) UnblockByID(ctx context.Context, tableName string, id int) error {
+func (r *Repo) UnblockByUUID(ctx context.Context, tableName string, id string) error {
 	if err := r.db.WithContext(ctx).Table(tableName).Where("id = ?", id).Update("is_blocked", false).Error; err != nil {
 		return err
 	}

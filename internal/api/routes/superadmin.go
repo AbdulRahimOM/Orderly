@@ -17,13 +17,13 @@ func mountSuperAdminRoutes(app *fiber.App, handlers *di.Handlers) {
 
 	admin := superAdmin.Group("/admin")
 	{
-		admin.Post("", handlers.AccountHandler.CreateAdmin)
-		admin.Get("", handlers.AccountHandler.GetAdmins)
-		admin.Get("/:id", handlers.AccountHandler.GetAdminByID)
-		admin.Put("/:id", handlers.AccountHandler.UpdateAdminByID)
-		admin.Delete("/:id", handlers.AccountHandler.SoftDeleteRecordByID(models.Admins_TableName))
-		admin.Patch("/undo-delete/:id", handlers.AccountHandler.UndoSoftDeleteRecordByID(models.Admins_TableName))
-		admin.Patch("/block/:id", handlers.AccountHandler.BlockByID(models.Admins_TableName))
-		admin.Patch("/unblock/:id", handlers.AccountHandler.UnblockByID(models.Admins_TableName))
+		admin.Post("", handlers.Handler.CreateAdmin)
+		admin.Get("", handlers.Handler.GetAdmins)
+		admin.Get("/:id", handlers.Handler.GetAdminByID)
+		admin.Put("/:id", handlers.Handler.UpdateAdminByID)
+		admin.Delete("/:id", handlers.Handler.SoftDeleteRecordByUUID(models.Admins_TableName))
+		admin.Patch("/undo-delete/:id", handlers.Handler.UndoSoftDeleteRecordByUUID(models.Admins_TableName))
+		admin.Patch("/block/:id", handlers.Handler.BlockByUUID(models.Admins_TableName))
+		admin.Patch("/unblock/:id", handlers.Handler.UnblockByUUID(models.Admins_TableName))
 	}
 }

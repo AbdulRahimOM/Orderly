@@ -1,4 +1,4 @@
-package accounthandler
+package handler
 
 import (
 	"fmt"
