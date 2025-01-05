@@ -32,6 +32,7 @@ type DevelopmentConfig struct {
 	Dev_AutoMigrateDbOnStart   bool `mapstructure:"DEVMODE_AUTO_MIGRATE_DB_ON_START"`
 	Dev_BypassOtp              bool `mapstructure:"DEVMODE_BYPASS_OTP"`
 	Dev_AllowSendingEmails     bool `mapstructure:"DEVMODE_ALLOW_SENDING_EMAILS"`
+	Dev_LogCredentials         bool `mapstructure:"DEVMODE_LOG_CREDENTIALS"`
 	Dev_Mode                   bool `mapstructure:"DEV_MODE"`
 }
 

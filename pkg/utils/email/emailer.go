@@ -19,6 +19,13 @@ func init() {
 }
 
 func SendCredentials(to, username, password string) error {
+	if config.Configs.Dev_LogCredentials {
+		fmt.Println("Email: ", to)
+		fmt.Println("Username: ", username)
+		fmt.Println("Password: ", password)
+		return nil
+	}
+
 	subject := "Your credentials for Orderly"
 	body := fmt.Sprintf(
 		`Hello,
@@ -37,6 +44,10 @@ Orderly Team`,
 }
 
 func SendEmail(to, subject, body string) error {
+	if !config.Configs.Dev_AllowSendingEmails {
+		return nil
+	}
+
 	msg := []byte(fmt.Sprintf("From: %s\r\nTo: %s\r\nSubject: %s\r\n\r\n%s", from, to, subject, body))
 
 	err := smtp.SendMail(addr, auth, from, []string{to}, msg)
