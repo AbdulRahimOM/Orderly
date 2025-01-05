@@ -16,6 +16,8 @@ const (
 	RoleSuperAdmin = "superadmin"
 	RoleAdmin      = "admin"
 	RoleUser       = "user"
+
+	UnverifiedUser = "unverifiedUser"
 )
 
 // Development purpose:

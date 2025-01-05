@@ -1,4 +1,4 @@
-package accountuc
+package uc
 
 import (
 	"context"
@@ -10,13 +10,15 @@ import (
 	"orderly/pkg/utils/hashpassword"
 	"orderly/pkg/utils/helper"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 const (
 	randomPasswordLength = 8
 )
 
-func (uc *AccountUC) CreateAdmin(ctx context.Context, req *request.CreateAdminReq) *response.Response {
+func (uc *Usecase) CreateAdmin(ctx context.Context, req *request.CreateAdminReq) *response.Response {
 
 	password := helper.GenerateRandomAlphanumeric(randomPasswordLength)
 	hashedPw, err := hashpassword.GetHashedPassword(password)
@@ -25,6 +27,7 @@ func (uc *AccountUC) CreateAdmin(ctx context.Context, req *request.CreateAdminRe
 	}
 	// Create a new admin
 	admin := models.Admin{
+		ID:             uuid.New(),
 		Name:           req.Name,
 		Username:       req.Username,
 		HashedPassword: hashedPw,
@@ -39,10 +42,11 @@ func (uc *AccountUC) CreateAdmin(ctx context.Context, req *request.CreateAdminRe
 	if err := uc.repo.CreateRecord(ctx, &admin); err != nil {
 		return admin.GetResponseFromDBError(err)
 	}
+
 	return response.CreatedResponse(admin.ID)
 }
 
-func (uc *AccountUC) GetAdmins(ctx context.Context, req *request.GetRequest) *response.Response {
+func (uc *Usecase) GetAdmins(ctx context.Context, req *request.GetRequest) *response.Response {
 	admins, err := uc.repo.GetAdmins(ctx, req)
 	if err != nil {
 		return response.DBErrorResponse(fmt.Errorf("error getting admins: %v", err))
@@ -50,7 +54,7 @@ func (uc *AccountUC) GetAdmins(ctx context.Context, req *request.GetRequest) *re
 	return response.SuccessResponse(200, respcode.Success, admins)
 }
 
-func (uc *AccountUC) GetAdminByID(ctx context.Context, id int) *response.Response {
+func (uc *Usecase) GetAdminByID(ctx context.Context, id string) *response.Response {
 	admin, err := uc.repo.GetAdminByID(ctx, id)
 	if err != nil {
 		return response.DBErrorResponse(fmt.Errorf("error getting admin: %v", err))
@@ -58,7 +62,7 @@ func (uc *AccountUC) GetAdminByID(ctx context.Context, id int) *response.Respons
 	return response.SuccessResponse(200, respcode.Success, admin)
 }
 
-func (uc *AccountUC) UpdateAdminByID(ctx context.Context, id int, req *request.UpdateAdminReq) *response.Response {
+func (uc *Usecase) UpdateAdminByID(ctx context.Context, id string, req *request.UpdateAdminReq) *response.Response {
 	err := uc.repo.UpdateAdminByID(ctx, id, req)
 	if err != nil {
 		return models.Admin{}.GetResponseFromDBError(err)

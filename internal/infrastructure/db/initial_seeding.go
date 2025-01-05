@@ -4,12 +4,16 @@ import (
 	"fmt"
 	"log"
 	"orderly/internal/domain/models"
+	"orderly/internal/infrastructure/config"
 
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
 func initiateSuperAdmin(db *gorm.DB) {
+	superAdminUsername := config.InitialData.SuperAdminUsername
+	superAdminPassword := config.InitialData.SuperAdminPassword
 	//check if super admin exists
 	var superAdmin models.SuperAdmin
 	err := db.First(&superAdmin).Error
@@ -28,6 +32,7 @@ func initiateSuperAdmin(db *gorm.DB) {
 
 			//create super admin
 			superAdmin = models.SuperAdmin{
+				ID:             uuid.New(),
 				Username:       superAdminUsername,
 				HashedPassword: string(encryptedPasswordByte),
 			}

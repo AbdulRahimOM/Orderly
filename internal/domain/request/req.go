@@ -12,9 +12,21 @@ const (
 	defaultLimit = 10
 )
 
-type SuperAdminSigninReq struct {
+type SigninReq struct {
 	Username string `json:"username" validate:"required"`
 	Password string `json:"password" validate:"required"`
+}
+
+type VerifyOTPReq struct {
+	OTP string `json:"otp" validate:"required"`
+}
+
+type UserSignupReq struct {
+	Username string `json:"username" validate:"required"`
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required"`
+	Name     string `json:"name" validate:"required"`
+	Phone    string `json:"phone" validate:"required,e164"`
 }
 
 type CreateAdminReq struct {

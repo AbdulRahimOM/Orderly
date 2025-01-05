@@ -7,5 +7,5 @@ import (
 )
 
 type AccountUsecase interface {
-	SuperAdminSignin(ctx context.Context, req *request.SuperAdminSigninReq) *response.Response
+	SuperAdminSignin(ctx context.Context, req *request.SigninReq) *response.Response
 }

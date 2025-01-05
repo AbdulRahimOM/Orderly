@@ -28,9 +28,16 @@ type PostgresConn struct {
 }
 
 type DevelopmentConfig struct {
-	Dev_AllowUniversalPassword bool
-	Dev_AutoMigrateDbOnStart   bool
-	Dev_Mode                   bool
+	Dev_AllowUniversalPassword bool `mapstructure:"DEVMODE_ALLOW_UNIVERSAL_PASSWORD"`
+	Dev_AutoMigrateDbOnStart   bool `mapstructure:"DEVMODE_AUTO_MIGRATE_DB_ON_START"`
+	Dev_BypassOtp              bool `mapstructure:"DEVMODE_BYPASS_OTP"`
+	Dev_Mode                   bool `mapstructure:"DEV_MODE"`
+}
+
+type Twilio struct {
+	AccountSid string `mapstructure:"TWILIO_ACCOUNT_SID"`
+	AuthToken  string `mapstructure:"TWILIO_AUTH_TOKEN"`
+	ServiceSid string `mapstructure:"TWILIO_SERVICE_SID"`
 }
 
 var (
@@ -43,6 +50,7 @@ var (
 		PostgresConn      `mapstructure:",squash"`
 		Env               `mapstructure:",squash"`
 		DevelopmentConfig `mapstructure:",squash"`
+		Twilio            `mapstructure:",squash"`
 	}
 )
 
@@ -61,12 +69,8 @@ func loadConfig() {
 		log.Fatalln("error occured while writing env values onto variables, error:", err)
 	}
 
-	InitialData.SuperAdminUsername = viper.GetString("SUPER_ADMIN_USERNAME")
-	InitialData.SuperAdminPassword = viper.GetString("SUPER_ADMIN_PASSWORD")
-
-	Configs.DevelopmentConfig.Dev_AllowUniversalPassword = viper.GetBool("ALLOW_UNIVERSAL_PASSWORD")
-	Configs.DevelopmentConfig.Dev_AutoMigrateDbOnStart = viper.GetBool("AUTO_MIGRATE_DB_ON_START")
-	Configs.DevelopmentConfig.Dev_Mode = viper.GetBool("DEV_MODE")
+	InitialData.SuperAdminUsername = viper.GetString("INITIAL_SUPER_ADMIN_USERNAME")
+	InitialData.SuperAdminPassword = viper.GetString("INITIAL_SUPER_ADMIN_PASSWORD")
 
 	fmt.Println("Envirnment variables loaded successfully")
 }

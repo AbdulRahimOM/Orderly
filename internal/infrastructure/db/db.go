@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"orderly/internal/domain/models"
-	"orderly/internal/infrastructure/config"
 
 	"gorm.io/gorm"
 )
@@ -18,9 +17,7 @@ type postTableCreation interface {
 }
 
 var (
-	superAdminUsername = config.InitialData.SuperAdminUsername
-	superAdminPassword = config.InitialData.SuperAdminPassword
-	publicTables       = []MigrateTable{
+	publicTables = []MigrateTable{
 		&models.SuperAdmin{},
 		&models.Admin{},
 		&models.User{},
@@ -39,30 +36,6 @@ var (
 		&models.RefundTransaction{},
 	}
 )
-
-var PublicDB *gorm.DB = GetConnectionToPublicDB()
-
-func init() {
-	InitPublicDB() //initialize the public database (create tables and seed super admin)
-}
-
-func GetConnectionToPublicDB() *gorm.DB {
-	db, err := connectToDB()
-	if err != nil {
-		log.Fatal("Couldn't connect to the database. Error:", err)
-	}
-
-	return db
-}
-
-func InitPublicDB() { //is called in init function
-
-	if config.Configs.Dev_AutoMigrateDbOnStart {
-		fmt.Println("Auto migrating public tables...")
-		migratePublicTables(PublicDB)
-	}
-	initiateSuperAdmin(PublicDB)
-}
 
 func migratePublicTables(db *gorm.DB) {
 	for _, table := range publicTables {

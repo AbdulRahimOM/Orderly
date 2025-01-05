@@ -1,4 +1,4 @@
-package accountuc
+package uc
 
 import (
 	repo "orderly/internal/repository"
@@ -13,10 +13,17 @@ import (
 //	func NewAccountUsecase(repo interfaces.Repository) usecases.AccountUsecase {
 //		return &AccountUC{repo: repo}
 //	}
-type AccountUC struct {
-	repo *repo.Repo
+
+type smsOtpClient interface {
+	SendOtp(phoneNumber string) error
+	VerifyOtp(phoneNumber string, otp string) (bool, error)
 }
 
-func NewUsecase(repo *repo.Repo) *AccountUC {
-	return &AccountUC{repo: repo}
+type Usecase struct {
+	repo         *repo.Repo
+	smsOtpClient smsOtpClient
+}
+
+func NewUsecase(repo *repo.Repo, smsOtpClient smsOtpClient) *Usecase {
+	return &Usecase{repo: repo, smsOtpClient: smsOtpClient}
 }
