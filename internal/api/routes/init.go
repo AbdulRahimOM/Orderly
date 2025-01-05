@@ -11,4 +11,5 @@ func MountRoutes(app *fiber.App) {
 	handlers := di.GetHandlers(db.DB)
 	mountLoginRoutes(app, handlers)
 	mountSuperAdminRoutes(app, handlers)
+	mountAdminRoutes(app, handlers)
 }

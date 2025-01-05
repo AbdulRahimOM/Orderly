@@ -52,8 +52,8 @@ func (uc *Usecase) UndoSoftDeleteRecordByUUID(ctx context.Context, tableName str
 	return response.SuccessResponse(fiber.StatusOK, respcode.Success, nil)
 }
 
-func (uc *Usecase) BlockByUUID(ctx context.Context, tableName string, id string) *response.Response {
-	err := uc.repo.BlockByUUID(ctx, tableName, id)
+func (uc *Usecase) ActivateByUUID(ctx context.Context, tableName string, id string) *response.Response {
+	err := uc.repo.ActivateByUUID(ctx, tableName, id)
 	if err != nil {
 		return response.DBErrorResponse(err)
 	}
@@ -61,8 +61,8 @@ func (uc *Usecase) BlockByUUID(ctx context.Context, tableName string, id string)
 	return response.SuccessResponse(fiber.StatusOK, respcode.Success, nil)
 }
 
-func (uc *Usecase) UnblockByUUID(ctx context.Context, tableName string, id string) *response.Response {
-	err := uc.repo.UnblockByUUID(ctx, tableName, id)
+func (uc *Usecase) DeactivateByUUID(ctx context.Context, tableName string, id string) *response.Response {
+	err := uc.repo.DeactivateByUUID(ctx, tableName, id)
 	if err != nil {
 		return response.DBErrorResponse(err)
 	}

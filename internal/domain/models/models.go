@@ -45,8 +45,7 @@ type User struct {
 	CreatedAt      time.Time      `gorm:"column:created_at;default:CURRENT_TIMESTAMP" json:"createdAt"`
 	UpdatedAt      time.Time      `gorm:"column:updated_at;autoUpdateTime" json:"updatedAt"`
 	DeletedAt      gorm.DeletedAt `gorm:"index" json:"deletedAt"`
-	IsBlocked      bool           `gorm:"column:is_blocked;default:false" json:"isBlocked"`
-	IsVerified     bool           `gorm:"column:is_verified;default:false" json:"isVerified"`
+	IsActive	   bool           `gorm:"column:is_active;default:true" json:"isActive"`
 }
 
 func (User) TableName() string {
@@ -134,7 +133,7 @@ type Admin struct {
 	Name           string         `gorm:"column:name" json:"name"`
 	Phone          string         `gorm:"column:phone" json:"phone"`
 	Designation    string         `gorm:"column:designation" json:"designation"`
-	IsBlocked      bool           `gorm:"column:is_blocked;default:false" json:"isBlocked"`
+	IsActive	   bool           `gorm:"column:is_active;default:true" json:"isActive"`
 	CreatedAt      time.Time      `gorm:"column:created_at;default:CURRENT_TIMESTAMP" json:"createdAt"`
 	UpdatedAt      time.Time      `gorm:"column:updated_at;autoUpdateTime" json:"updatedAt"`
 	DeletedAt      gorm.DeletedAt `gorm:"index" json:"deletedAt"`

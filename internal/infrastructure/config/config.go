@@ -31,6 +31,7 @@ type DevelopmentConfig struct {
 	Dev_AllowUniversalPassword bool `mapstructure:"DEVMODE_ALLOW_UNIVERSAL_PASSWORD"`
 	Dev_AutoMigrateDbOnStart   bool `mapstructure:"DEVMODE_AUTO_MIGRATE_DB_ON_START"`
 	Dev_BypassOtp              bool `mapstructure:"DEVMODE_BYPASS_OTP"`
+	Dev_AllowSendingEmails     bool `mapstructure:"DEVMODE_ALLOW_SENDING_EMAILS"`
 	Dev_Mode                   bool `mapstructure:"DEV_MODE"`
 }
 
@@ -38,6 +39,13 @@ type Twilio struct {
 	AccountSid string `mapstructure:"TWILIO_ACCOUNT_SID"`
 	AuthToken  string `mapstructure:"TWILIO_AUTH_TOKEN"`
 	ServiceSid string `mapstructure:"TWILIO_SERVICE_SID"`
+}
+
+type Emailing struct {
+	FromEmail         string `mapstructure:"EMAIL_FROM"`
+	AppPassword       string `mapstructure:"EMAIL_APP_PASSWORD"`
+	SmtpServerAddress string `mapstructure:"SMTP_SERVER_ADDRESS"`
+	SmtpsPort         string `mapstructure:"SMTPS_PORT"`
 }
 
 var (
@@ -51,6 +59,7 @@ var (
 		Env               `mapstructure:",squash"`
 		DevelopmentConfig `mapstructure:",squash"`
 		Twilio            `mapstructure:",squash"`
+		Emailing          `mapstructure:",squash"`
 	}
 )
 

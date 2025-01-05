@@ -199,8 +199,6 @@ func (uc *Usecase) UserSignUpVerifyOTP(ctx context.Context, req *request.VerifyO
 		return response.InternalServerErrorResponse(fmt.Errorf("error in verifying OTP: %v", err))
 	} else if !ok {
 		return response.ErrorResponse(http.StatusUnauthorized, respcode.INVALID_OTP, fmt.Errorf("invalid OTP"))
-	} else {
-		user.IsVerified = true
 	}
 
 	hashpassword, err := hashpassword.GetHashedPassword(password)
