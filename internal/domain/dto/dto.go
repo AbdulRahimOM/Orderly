@@ -105,3 +105,10 @@ type UserAddress struct {
 	Landmark string    `gorm:"column:landmark" json:"landmark"`
 	Country  string    `gorm:"column:country" json:"country"`
 }
+
+type Cart struct {
+	ProductID          int     `gorm:"column:product_id;primaryKey" json:"productId"`
+	Quantity           int     `gorm:"column:quantity" json:"quantity"`
+	PriceWhenPutInCart float64 `gorm:"column:price_when_put_in_cart" json:"priceWhenPutInCart"`
+	CurrentSalePrice   float64 `gorm:"column:current_sale_price" json:"currentSalePrice"`
+}
