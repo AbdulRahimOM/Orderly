@@ -86,3 +86,58 @@ func (r *Repo) GetProductByID(ctx context.Context, id int) (*dto.Product, error)
 
 	return &product, nil
 }
+
+func (r *Repo) UpdateProductByID(ctx context.Context, id int, req *request.UpdateProductReq) error {
+	result := r.db.WithContext(ctx).Model(&models.Product{}).Where("id = ? AND deleted_at IS NULL", id).Updates(map[string]interface{}{
+		"name":               req.Name,
+		"description":        req.Description,
+		"category_id":        req.CategoryID,
+		"min_sale_price":     req.MinSalePrice,
+		"max_sale_price":     req.MaxSalePrice,
+		"base_price":         req.BasePrice,
+		"current_sale_price": req.CurrentSalePrice,
+		"optimal_stock":      req.OptimalStock,
+	})
+	if result.Error != nil {
+		return fmt.Errorf("error updating product: %v", result.Error)
+	}
+	if result.RowsAffected == 0 {
+		return ErrRecordNotFound
+	}
+
+	return nil
+}
+
+func (r *Repo) GetProductStockByID(ctx context.Context, id int) (int, error) {
+	var currentStock int
+	result := r.db.WithContext(ctx).Model(&models.Product{}).Select("current_stock").Where("id = ?", id).Scan(&currentStock)
+	if result.Error != nil {
+		return 0, fmt.Errorf("error getting product stock: %v", result.Error)
+	}
+	if result.RowsAffected == 0 {
+		return 0, ErrRecordNotFound
+	}
+
+	return currentStock, nil
+}
+
+func (r *Repo) AddProductStockByID(ctx context.Context, id int, addingStock int) (int, error) {
+
+	earlierStock, err := r.GetProductStockByID(ctx, id)
+	if err != nil {
+		return 0, err
+	}
+
+	result := r.db.WithContext(ctx).
+		Model(&models.Product{}).
+		Where("id = ? AND deleted_at IS NULL", id).
+		Update("current_stock", earlierStock+addingStock)
+	if result.Error != nil {
+		return 0, fmt.Errorf("error adding product stock: %v", result.Error)
+	}
+	if result.RowsAffected == 0 {
+		return 0, ErrRecordNotFound
+	}
+
+	return earlierStock + addingStock, nil
+}

@@ -94,11 +94,37 @@ func (u *Usecase) GetProductByID(ctx context.Context, id int) *response.Response
 	return response.SuccessResponse(200, respcode.Success, product)
 }
 
-func (u *Usecase) UpdateProductByID(ctx context.Context, id int, req *request.ProductReq) *response.Response {
-	// err := u.repo.UpdateProductByID(ctx, id, req)
-	// if err != nil {
-	// 	return response.DBErrorResponse(err)
-	// }
+func (u *Usecase) UpdateProductByID(ctx context.Context, id int, req *request.UpdateProductReq) *response.Response {
+	err := u.repo.UpdateProductByID(ctx, id, req)
+	if err != nil {
+		return response.DBErrorResponse(err)
+	}
 
 	return response.SuccessResponse(200, respcode.Success, nil)
 }
+
+func (u *Usecase) GetProductStockByID(ctx context.Context, id int) *response.Response {
+	productStock, err := u.repo.GetProductStockByID(ctx, id)
+	if err != nil {
+		if err == repo.ErrRecordNotFound {
+			return response.NotFoundResponse("product")
+		}
+		return response.DBErrorResponse(err)
+	}
+
+	return response.SuccessResponse(200, respcode.Success, map[string]interface{}{
+		"current_stock": productStock,
+	})
+}
+
+func (u *Usecase) AddProductStockByID(ctx context.Context, id int, req *request.AddProductStockReq) *response.Response {
+	updatedStock, err := u.repo.AddProductStockByID(ctx, id, req.AddingQuantity)
+	if err != nil {
+		return response.DBErrorResponse(err)
+	}
+
+	return response.SuccessResponse(200, respcode.Success, map[string]interface{}{
+		"current_stock": updatedStock,
+	})
+}
+

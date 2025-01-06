@@ -43,10 +43,8 @@ func mountAdminRoutes(app *fiber.App, handlers *di.Handlers) {
 			product.Put("/:id", handlers.Handler.UpdateProductByID)
 			product.Delete("/:id", handlers.Handler.SoftDeleteRecordByID(models.Products_TableName))
 			product.Patch("/undo-delete/:id", handlers.Handler.UndoSoftDeleteRecordByID(models.Products_TableName))
-			// product.Get("/stock/:id", handlers.Handler.GetProductStockByID)
-			// product.Patch("/stock/:id", handlers.Handler.UpdateProductStockByID)
-			// product.Patch("/stock/add/:id", handlers.Handler.AddProductStockByID)
-			// product.Patch("/stock/reduce/:id", handlers.Handler.ReduceProductStockByID)
+			product.Get("/stock/:id", handlers.Handler.GetProductStockByID)
+			product.Put("/stock/add/:id", handlers.Handler.AddProductStockByID)
 		}
 
 	}

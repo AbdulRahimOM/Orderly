@@ -86,11 +86,34 @@ func (h *Handler) UpdateProductByID(c *fiber.Ctx) error {
 	if err != nil {
 		return response.InvalidURLParamResponse("id",err).WriteToJSON(c)
 	}
-	req := new(request.ProductReq)
+	req := new(request.UpdateProductReq)
 	if ok, err := validation.BindAndValidateJSONRequest(c, req); !ok {
 		return err
 	}
 
 	response := h.uc.UpdateProductByID(c.Context(), id, req)
+	return response.WriteToJSON(c)
+}
+
+func (h *Handler) GetProductStockByID(c *fiber.Ctx) error {
+	id,err := c.ParamsInt("id")
+	if err != nil {
+		return response.InvalidURLParamResponse("id",err).WriteToJSON(c)
+	}
+	response := h.uc.GetProductStockByID(c.Context(), id)
+	return response.WriteToJSON(c)
+}
+
+func (h *Handler) AddProductStockByID(c *fiber.Ctx) error {
+	id,err := c.ParamsInt("id")
+	if err != nil {
+		return response.InvalidURLParamResponse("id",err).WriteToJSON(c)
+	}
+	req := new(request.AddProductStockReq)
+	if ok, err := validation.BindAndValidateJSONRequest(c, req); !ok {
+		return err
+	}
+
+	response := h.uc.AddProductStockByID(c.Context(), id, req)
 	return response.WriteToJSON(c)
 }
