@@ -40,8 +40,6 @@ func (r *Repo) AddToCart(ctx context.Context, req *request.AddToCartReq) error {
 		return fmt.Errorf("error checking if product already in cart: %v", err)
 	}
 
-	fmt.Println("alreadyInCart: ", alreadyInCart)
-
 	if alreadyInCart {
 		//update quantity
 		err = r.db.WithContext(ctx).Table(models.CartItems_TableName).

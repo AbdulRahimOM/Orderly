@@ -211,14 +211,26 @@ func (m Product) PostTableCreation(db *gorm.DB) error {
 
 // Orders table
 type Order struct {
-	ID                     uuid.UUID `gorm:"column:id;primaryKey" json:"id"`
-	UserID                 uuid.UUID `gorm:"column:user_id" json:"userId"`
-	OrderDate              string    `gorm:"column:order_date;type:date" json:"orderDate"`
-	TotalAmount            float64   `gorm:"column:total_amount" json:"totalAmount"`
-	PaymentMethod          string    `gorm:"column:payment_method" json:"paymentMethod"`
-	PaymentID              int       `gorm:"column:payment_id" json:"paymentId"`
-	OrderStatus            string    `gorm:"column:order_status" json:"orderStatus"`
-	DeliveredOrCancelledAt time.Time `gorm:"column:delivered_or_cancelled_at;type:date" json:"deliveredOrCancelledAt"`
+	ID                     uuid.UUID  `gorm:"column:id;primaryKey" json:"id"`
+	UserID                 uuid.UUID  `gorm:"column:user_id" json:"userId"`
+	OrderTime              time.Time  `gorm:"column:order_time;default:CURRENT_TIMESTAMP" json:"orderTime"`
+	TotalAmount            float64    `gorm:"column:total_amount" json:"totalAmount"`
+	PaymentMethod          string     `gorm:"column:payment_method" json:"paymentMethod"`
+	PaymentID              *int       `gorm:"column:payment_id" json:"paymentId"`
+	OrderStatus            string     `gorm:"column:order_status" json:"orderStatus"`
+	DeliveredOrCancelledAt *time.Time `gorm:"column:delivered_or_cancelled_at;type:date" json:"deliveredOrCancelledAt"`
+
+	//Shipping Address
+	House    string `gorm:"column:house" json:"house"`
+	Street1  string `gorm:"column:street1" json:"street1"`
+	Street2  string `gorm:"column:street2" json:"street2"`
+	City     string `gorm:"column:city" json:"city"`
+	State    string `gorm:"column:state" json:"state"`
+	Pincode  string `gorm:"column:pincode" json:"pincode"`
+	Landmark string `gorm:"column:landmark" json:"landmark"`
+	Country  string `gorm:"column:country" json:"country"`
+
+	CreatedAt time.Time `gorm:"column:created_at;default:CURRENT_TIMESTAMP" json:"createdAt"`
 
 	User User `gorm:"foreignKey:UserID;references:ID" json:"-"`
 }
@@ -236,10 +248,10 @@ func (m Order) BeforeCreate(tx *gorm.DB) (err error) {
 
 // OrderProducts table
 type OrderProduct struct {
-	OrderID          uuid.UUID `gorm:"column:order_id;primaryKey" json:"orderId"`
-	ProductID        int       `gorm:"column:product_id;primaryKey" json:"productId"`
-	Quantity         int       `gorm:"column:quantity" json:"quantity"`
-	PerUnitSalePrice int       `gorm:"column:per_unit_sale_price" json:"perUnitSalePrice"`
+	OrderID      uuid.UUID `gorm:"column:order_id;primaryKey" json:"orderId"`
+	ProductID    int       `gorm:"column:product_id;primaryKey" json:"productId"`
+	Quantity     int       `gorm:"column:quantity" json:"quantity"`
+	SellingPrice float64   `gorm:"column:selling_price" json:"sellingPrice"`
 
 	Order   Order   `gorm:"foreignKey:OrderID;references:ID" json:"-"`
 	Product Product `gorm:"foreignKey:ProductID;references:ID" json:"-"`

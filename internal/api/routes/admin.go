@@ -47,5 +47,13 @@ func mountAdminRoutes(app *fiber.App, handlers *di.Handlers) {
 			product.Put("/stock/add/:id", handlers.Handler.AddProductStockByID)
 		}
 
+		order:= admin.Group("/order")
+		{
+			order.Get("", handlers.Handler.GetOrders)
+			order.Get("/:id", handlers.Handler.GetOrderDetails)
+			order.Patch("/cancel/:id", handlers.Handler.CancelOrder)
+			order.Patch("/mark-as-delivered/:id", handlers.Handler.MarkOrderAsDelivered)
+		}
+
 	}
 }

@@ -42,6 +42,14 @@ func mountUserRoutes(app *fiber.App, handlers *di.Handlers) {
 			cart.Delete("/clear", handlers.Handler.ClearCart)
 		}
 
+		order := user.Group("/order")
+		{
+			order.Get("", handlers.Handler.GetMyOrders)
+			order.Get("/:id", handlers.Handler.GetMyOrderDetails)
+			order.Post("", handlers.Handler.CreateOrder)
+			order.Patch("/cancel/:id", handlers.Handler.CancelMyOrder)
+		}
+
 	}
 
 }
