@@ -3,6 +3,8 @@ package helper
 import (
 	"context"
 	"orderly/internal/domain/constants"
+
+	"github.com/google/uuid"
 )
 
 func GetRoleFromContext(ctx context.Context) string {
@@ -14,11 +16,11 @@ func GetRoleFromContext(ctx context.Context) string {
 	return ""
 }
 
-func GetUserIdFromContext(ctx context.Context) int {
-	userID := ctx.Value(constants.UserID)
-	if userID != nil {
-		return userID.(int)
+func GetUserIdFromContext(ctx context.Context) uuid.UUID {
+	userID,ok := ctx.Value(constants.UserID).(uuid.UUID)
+	if !ok {
+		return uuid.Nil
 	}
 
-	return 0
+	return userID
 }

@@ -52,6 +52,13 @@ type User struct {
 	IsDeleted bool           `gorm:"is_deleted" json:"isDeleted"`
 }
 
+type UserProfile struct {
+	Name      string `gorm:"column:name" json:"name"`
+	Email     string `gorm:"column:email" json:"email"`
+	Phone     string `gorm:"column:phone" json:"phone"`
+	IsBlocked bool   `gorm:"column:is_blocked" json:"isBlocked"`
+}
+
 type UserInList struct {
 	ID        uuid.UUID `gorm:"column:id;primaryKey" json:"id"`
 	Name      string    `gorm:"column:name" json:"name"`
@@ -85,4 +92,16 @@ type Product struct {
 	UpdatedAt        time.Time      `gorm:"column:updated_at;autoUpdateTime" json:"updatedAt"`
 	DeletedAt        gorm.DeletedAt `gorm:"index" json:"deletedAt"`
 	IsDeleted        bool           `gorm:"column:is_deleted" json:"isDeleted"`
+}
+
+type UserAddress struct {
+	ID       uuid.UUID `gorm:"column:id;primaryKey" json:"id"`
+	House    string    `gorm:"column:house" json:"house"`
+	Street1  string    `gorm:"column:street1" json:"street1"`
+	Street2  string    `gorm:"column:street2" json:"street2"`
+	City     string    `gorm:"column:city" json:"city"`
+	State    string    `gorm:"column:state" json:"state"`
+	Pincode  string    `gorm:"column:pincode" json:"pincode"`
+	Landmark string    `gorm:"column:landmark" json:"landmark"`
+	Country  string    `gorm:"column:country" json:"country"`
 }

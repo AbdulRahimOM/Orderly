@@ -12,4 +12,6 @@ func MountRoutes(app *fiber.App) {
 	mountLoginRoutes(app, handlers)
 	mountSuperAdminRoutes(app, handlers)
 	mountAdminRoutes(app, handlers)
+	mountUserRoutes(app, handlers)
+	mountBrowseRoutes(app, handlers)
 }

@@ -84,7 +84,7 @@ func (User) PostTableCreation(db *gorm.DB) error {
 // Addresses table
 type Address struct {
 	ID       uuid.UUID `gorm:"column:id;primaryKey" json:"id"`
-	UserID   int       `gorm:"column:user_id" json:"userId"`
+	UserID   uuid.UUID `gorm:"column:user_id" json:"userId"`
 	House    string    `gorm:"column:house" json:"house"`
 	Street1  string    `gorm:"column:street1" json:"street1"`
 	Street2  string    `gorm:"column:street2" json:"street2"`

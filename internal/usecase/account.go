@@ -92,3 +92,57 @@ func (uc *Usecase) GetUserByID(ctx context.Context, id string) *response.Respons
 	}
 	return response.SuccessResponse(200, respcode.Success, user)
 }
+
+func (uc *Usecase) GetUserProfile(ctx context.Context) *response.Response {
+	user, err := uc.repo.GetUserProfile(ctx)
+	if err != nil {
+		return response.DBErrorResponse(fmt.Errorf("error getting user profile: %v", err))
+	}
+	return response.SuccessResponse(200, respcode.Success, user)
+}
+
+func (uc *Usecase) GetUserAddresses(ctx context.Context) *response.Response {
+	addresses, err := uc.repo.GetUserAddresses(ctx)
+	if err != nil {
+		return response.DBErrorResponse(fmt.Errorf("error getting user addresses: %v", err))
+	}
+	return response.SuccessResponse(200, respcode.Success, addresses)
+}
+
+func (uc *Usecase) GetUserAddressByID(ctx context.Context, id string) *response.Response {
+	address, err := uc.repo.GetUserAddressByID(ctx, id)
+	if err != nil {
+		return response.DBErrorResponse(fmt.Errorf("error getting user address: %v", err))
+	}
+	return response.SuccessResponse(200, respcode.Success, address)
+}
+
+func (uc *Usecase) CreateUserAddress(ctx context.Context, req *request.UserAddressReq) *response.Response {
+	userID:=helper.GetUserIdFromContext(ctx)
+	address := models.Address{
+		ID:        uuid.New(),
+		UserID:    userID,
+		House:    req.House,
+		Street1:   req.Street1,
+		Street2:   req.Street2,
+		City:     req.City,
+		State:    req.State,
+		Pincode: req.Pincode,
+		Country: req.Country,
+		Landmark: req.Landmark,
+	}
+
+	if err := uc.repo.CreateRecord(ctx, &address); err != nil {
+		return response.DBErrorResponse(fmt.Errorf("error creating user address: %v", err))
+	}
+
+	return response.CreatedResponse(address.ID)
+}
+
+func (uc *Usecase) UpdateUserAddressByID(ctx context.Context, id string, req *request.UserAddressReq) *response.Response {
+	err := uc.repo.UpdateUserAddressByID(ctx, id, req)
+	if err != nil {
+		return response.DBErrorResponse(fmt.Errorf("error updating user address: %v", err))
+	}
+	return response.SuccessResponse(200, respcode.Success, nil)
+}

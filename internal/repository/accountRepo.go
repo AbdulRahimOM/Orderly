@@ -7,6 +7,7 @@ import (
 	"orderly/internal/domain/dto"
 	"orderly/internal/domain/models"
 	"orderly/internal/domain/request"
+	"orderly/pkg/utils/helper"
 
 	"github.com/gofiber/fiber/v2/log"
 )
@@ -164,4 +165,66 @@ func (r *Repo) GetUserByID(ctx context.Context, id string) (*dto.User, error) {
 		return nil, ErrRecordNotFound
 	}
 	return &user, nil
+}
+
+func (r *Repo) GetUserProfile(ctx context.Context) (*dto.UserProfile, error) {
+	var (
+		profile dto.UserProfile
+		userID  = helper.GetUserIdFromContext(ctx)
+	)
+
+	result := r.db.Table(models.Users_TableName).Select("name", "email", "phone", "is_blocked").Where("id = ? AND deleted_at IS NULL", userID).Scan(&profile)
+	if result.Error != nil {
+		return nil, fmt.Errorf("error getting user profile: %v", result.Error)
+	}
+	if result.RowsAffected == 0 {
+		return nil, ErrRecordNotFound
+	}
+	return &profile, nil
+}
+
+func (r *Repo) GetUserAddresses(ctx context.Context) ([]dto.UserAddress, error) {
+	var (
+		addresses []dto.UserAddress
+		userID    = helper.GetUserIdFromContext(ctx)
+	)
+
+	err := r.db.Table(models.Addresses_TableName).Select("id", "house", "street1", "street2", "city", "state", "pincode", "landmark", "country").
+		Where("user_id = ?", userID).Scan(&addresses).Error
+	if err != nil {
+		return nil, fmt.Errorf("error getting user addresses: %v", err)
+	}
+	return addresses, nil
+}
+
+func (r *Repo) GetUserAddressByID(ctx context.Context, id string) (*dto.UserAddress, error) {
+	var (
+		address dto.UserAddress
+		userID  = helper.GetUserIdFromContext(ctx)
+	)
+
+	result := r.db.Table(models.Addresses_TableName).Select("id", "house", "street1", "street2", "city", "state", "pincode", "landmark", "country").
+		Where("id = ? AND user_id = ?", id, userID).Scan(&address)
+	if result.Error != nil {
+		return nil, fmt.Errorf("error getting user address: %v", result.Error)
+	}
+	if result.RowsAffected == 0 {
+		return nil, ErrRecordNotFound
+	}
+	return &address, nil
+}
+
+func (r *Repo) UpdateUserAddressByID(ctx context.Context, id string, req *request.UserAddressReq) error {
+	var (
+		userID = helper.GetUserIdFromContext(ctx)
+	)
+
+	result := r.db.Table(models.Addresses_TableName).Where("id = ? AND user_id = ?", id, userID).Save(req)
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return ErrRecordNotFound
+	}
+	return nil
 }
