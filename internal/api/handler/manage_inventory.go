@@ -30,18 +30,18 @@ func (h *Handler) GetCategories(c *fiber.Ctx) error {
 }
 
 func (h *Handler) GetCategoryByID(c *fiber.Ctx) error {
-	id,err := c.ParamsInt("id")
+	id, err := c.ParamsInt("id")
 	if err != nil {
-		return response.InvalidURLParamResponse("id",err).WriteToJSON(c)
+		return response.InvalidURLParamResponse("id", err).WriteToJSON(c)
 	}
 	response := h.uc.GetCategoryByID(c.Context(), id)
 	return response.WriteToJSON(c)
 }
 
 func (h *Handler) UpdateCategoryByID(c *fiber.Ctx) error {
-	id,err := c.ParamsInt("id")
+	id, err := c.ParamsInt("id")
 	if err != nil {
-		return response.InvalidURLParamResponse("id",err).WriteToJSON(c)
+		return response.InvalidURLParamResponse("id", err).WriteToJSON(c)
 	}
 	req := new(request.CategoryReq)
 	if ok, err := validation.BindAndValidateJSONRequest(c, req); !ok {
@@ -73,18 +73,18 @@ func (h *Handler) GetProducts(c *fiber.Ctx) error {
 }
 
 func (h *Handler) GetProductByID(c *fiber.Ctx) error {
-	id,err := c.ParamsInt("id")
+	id, err := c.ParamsInt("id")
 	if err != nil {
-		return response.InvalidURLParamResponse("id",err).WriteToJSON(c)
+		return response.InvalidURLParamResponse("id", err).WriteToJSON(c)
 	}
 	response := h.uc.GetProductByID(c.Context(), id)
 	return response.WriteToJSON(c)
 }
 
 func (h *Handler) UpdateProductByID(c *fiber.Ctx) error {
-	id,err := c.ParamsInt("id")
+	id, err := c.ParamsInt("id")
 	if err != nil {
-		return response.InvalidURLParamResponse("id",err).WriteToJSON(c)
+		return response.InvalidURLParamResponse("id", err).WriteToJSON(c)
 	}
 	req := new(request.UpdateProductReq)
 	if ok, err := validation.BindAndValidateJSONRequest(c, req); !ok {
@@ -96,18 +96,18 @@ func (h *Handler) UpdateProductByID(c *fiber.Ctx) error {
 }
 
 func (h *Handler) GetProductStockByID(c *fiber.Ctx) error {
-	id,err := c.ParamsInt("id")
+	id, err := c.ParamsInt("id")
 	if err != nil {
-		return response.InvalidURLParamResponse("id",err).WriteToJSON(c)
+		return response.InvalidURLParamResponse("id", err).WriteToJSON(c)
 	}
 	response := h.uc.GetProductStockByID(c.Context(), id)
 	return response.WriteToJSON(c)
 }
 
 func (h *Handler) AddProductStockByID(c *fiber.Ctx) error {
-	id,err := c.ParamsInt("id")
+	id, err := c.ParamsInt("id")
 	if err != nil {
-		return response.InvalidURLParamResponse("id",err).WriteToJSON(c)
+		return response.InvalidURLParamResponse("id", err).WriteToJSON(c)
 	}
 	req := new(request.AddProductStockReq)
 	if ok, err := validation.BindAndValidateJSONRequest(c, req); !ok {

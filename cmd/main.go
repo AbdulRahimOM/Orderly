@@ -7,8 +7,9 @@ import (
 	route "orderly/internal/api/routes"
 	"orderly/internal/infrastructure/config"
 
+	"github.com/gofiber/adaptor/v2"
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func healthCheck(c *fiber.Ctx) error {
@@ -23,7 +24,8 @@ func main() {
 		AppName:       "Ordely",
 		StrictRouting: true,
 	})
-	app.Use(logger.New())
+	// app.Use(logger.New())
+	app.Get("/metrics", adaptor.HTTPHandler(promhttp.Handler()))
 
 	// health check
 	app.Get("/health", healthCheck)

@@ -88,6 +88,7 @@ func NotFoundResponse(itemName string) *Response {
 }
 
 func (resp Response) WriteToJSON(c *fiber.Ctx) error {
+
 	if resp.Error == nil {
 		return c.Status(resp.HttpStatusCode).JSON(resp)
 	}

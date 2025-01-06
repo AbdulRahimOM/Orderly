@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"orderly/internal/api/middleware"
 	"orderly/internal/infrastructure/db"
 	"orderly/internal/infrastructure/di"
 
@@ -8,6 +9,7 @@ import (
 )
 
 func MountRoutes(app *fiber.App) {
+	app.Use(middleware.CustomLogger)
 	handlers := di.GetHandlers(db.DB)
 	mountLoginRoutes(app, handlers)
 	mountSuperAdminRoutes(app, handlers)
