@@ -80,19 +80,19 @@ func rateChangeOperation() {
 
 		//supply based
 		inflationFor0_5xStock          = 10
-		maxAllowedSupplyBasedInflation = 30
-		deflationfactorFor2xStock      = 20
-		minAllowedSupplyBasedDeflation = 30
+		maxAllowedSupplyBasedInflation = 15
+		deflationfactorFor2xStock      = 10
+		minAllowedSupplyBasedDeflation = 15
 
 		//demandBased
-		inflationFactorFor2xSalesWrtExpected  = 10
-		maxAllowedDemandBasedInflation        = 20
+		inflationFactorFor2xSalesWrtExpected  = 15
+		maxAllowedDemandBasedInflation        = 25
 		deflationfactorFor0_5SalesWrtExpected = 10
-		minAllowedDemandBasedDeflation        = 20
+		minAllowedDemandBasedDeflation        = 15
 
 		//Net Limits
-		netAllowedInfation  = 2
-		netAllowedDeflation = 0.5
+		netAllowedInfation  = 30
+		netAllowedDeflation = 25
 	)
 
 	for i, product := range productsInfo {
