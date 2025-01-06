@@ -30,3 +30,6 @@ main
 
 # Debug
 __debug_*
+
+# Log files
+data/
