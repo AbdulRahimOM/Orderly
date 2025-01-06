@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"orderly/internal/api/controls"
 	route "orderly/internal/api/routes"
 	"orderly/internal/infrastructure/config"
 
@@ -29,6 +30,9 @@ func main() {
 
 	// mount other routes
 	route.MountRoutes(app)
+
+	// schedule rate change cron job
+	controls.ScheduleMidNightRateChangeOperation()
 
 	err := app.Listen(fmt.Sprintf(":%s", config.Configs.Env.Port))
 	if err != nil {
