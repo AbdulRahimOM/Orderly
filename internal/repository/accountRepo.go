@@ -228,3 +228,54 @@ func (r *Repo) UpdateUserAddressByID(ctx context.Context, id string, req *reques
 	}
 	return nil
 }
+
+func (r *Repo) GetAccessPrivileges(ctx context.Context) ([]dto.AccessPrivilege, error) {
+	var privileges []dto.AccessPrivilege
+	result := r.db.Raw(`
+		SELECT
+			ap.admin_id AS admin_id,
+			ad.name AS admin_name,
+			ARRAY_AGG(ap.access_role) AS access_roles
+		FROM admin_privileges ap
+		JOIN admins ad ON ap.admin_id = ad.id
+		WHERE ad.deleted_at IS NULL AND AD.is_active = true
+		GROUP BY ap.admin_id, ad.name
+		ORDER BY ad.name
+	`).Scan(&privileges)
+	if result.Error != nil {
+		return nil, fmt.Errorf("error getting access privileges: %v", result.Error)
+	}
+	return privileges, nil
+}
+
+func (r *Repo) GetAccessPrivilegeByAdminID(ctx context.Context, adminID string) (*dto.AccessPrivilege, error) {
+	var privilege dto.AccessPrivilege
+	result := r.db.Raw(`
+		SELECT
+			ap.admin_id AS admin_id,
+			ad.name AS admin_name,
+			ARRAY_AGG(ap.access_role) AS access_roles
+		FROM admin_privileges ap
+		JOIN admins ad ON ap.admin_id = ad.id
+		WHERE ad.deleted_at IS NULL AND AD.is_active = true AND ap.admin_id = ?
+		GROUP BY ap.admin_id, ad.name
+	`, adminID).Scan(&privilege)
+	if result.Error != nil {
+		return nil, fmt.Errorf("error getting access privilege: %v", result.Error)
+	}
+	if result.RowsAffected == 0 {
+		return nil, ErrRecordNotFound
+	}
+	return &privilege, nil
+}
+
+func (r *Repo) DeleteAccessPrivilege(ctx context.Context, adminID string, privilege string) error {
+	result := r.db.Table(models.AdminPrivileges_TableName).Where("admin_id = ? AND access_role = ?", adminID, privilege).Delete(nil)
+	if result.Error != nil {
+		return fmt.Errorf("error deleting access privilege: %v", result.Error)
+	}
+	if result.RowsAffected == 0 {
+		return ErrRecordNotFound
+	}
+	return nil
+}

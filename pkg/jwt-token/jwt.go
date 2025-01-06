@@ -14,6 +14,7 @@ var (
 	ErrTokenExpired        = jwt.ErrTokenExpired
 	ErrTokenIsInvalid      = fmt.Errorf("jwt token is invalid")
 	ErrNoCustomClaimsFound = fmt.Errorf("error while parsing token, no custom claims found")
+	ErrTokenRevoked        = fmt.Errorf("token is revoked")
 )
 
 type tokenData struct {
@@ -25,6 +26,7 @@ type tokenData struct {
 type CustomClaims struct {
 	tokenData
 	jwt.RegisteredClaims
+	JTI string `json:"jti"`
 }
 
 func GenerateToken(id uuid.UUID, role string, addlInfo map[string]interface{}, JwtExpTimeInMinutes time.Duration) (string, error) {
@@ -39,6 +41,7 @@ func GenerateToken(id uuid.UUID, role string, addlInfo map[string]interface{}, J
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(JwtExpTimeInMinutes)),
 		},
+		JTI: uuid.New().String(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -67,6 +70,11 @@ func GetDataFromToken(tokenString string) (tokenData *tokenData, err error) {
 		if claims.ExpiresAt.Time.Before(time.Now()) {
 			return nil, ErrTokenExpired
 		}
+
+		if isTokenBlacklisted(claims.Id.String(), claims.JTI) {
+			return nil, ErrTokenRevoked
+		}
+
 		return &claims.tokenData, nil
 	} else {
 		return nil, ErrNoCustomClaimsFound

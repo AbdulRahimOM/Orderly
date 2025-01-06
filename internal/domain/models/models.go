@@ -164,7 +164,7 @@ func (Admin) GetResponseFromDBError(err error) *response.Response {
 // AdminPrivileges table
 type AdminPrivilege struct {
 	AdminID    uuid.UUID `gorm:"column:admin_id;primaryKey" json:"adminId"`
-	AccessRole string    `gorm:"column:access_role;primaryKey" json:"accessRole"`
+	AccessRole string    `gorm:"column:access_role;primaryKey;check:access_role IN ('inventory_manager', 'sales_manager', 'user_manager')" json:"accessRole"`
 
 	Admin Admin `gorm:"foreignKey:AdminID;references:ID" json:"-"`
 }
@@ -173,6 +173,19 @@ func (AdminPrivilege) TableName() string {
 	return AdminPrivileges_TableName
 }
 
+func (AdminPrivilege) GetResponseFromDBError(err error) *response.Response {
+	fmt.Println("error: ", err.Error())
+	refError:="ERROR: duplicate key value violates unique constraint \"admin_privileges_pkey\" (SQLSTATE 23505)"
+	fmt.Println("ref:", refError)
+	switch err.Error() {
+	case "ERROR: duplicate key value violates unique constraint \"admin_privileges_pkey\" (SQLSTATE 23505)":
+		return response.ErrorResponse(http.StatusConflict, "PRIVILEGE_ALREADY_EXISTS", err)
+	case "ERROR: new row for relation \"admin_privileges\" violates check constraint \"chk_admin_privileges_access_role\" (SQLSTATE 23514)": 
+		return response.ErrorResponse(http.StatusBadRequest, "INVALID_ACCESS_ROLE", err)
+	default:
+		return response.DBErrorResponse(err)
+	}
+}
 // Products table
 type Product struct {
 	ID               int            `gorm:"column:id;primaryKey" json:"id"`

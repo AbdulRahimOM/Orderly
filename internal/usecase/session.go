@@ -22,7 +22,7 @@ import (
 const (
 	USERNAME_NOT_REGISTERED = "USERNAME_NOT_REGISTERED"
 	PASSWORD_MISMATCH       = "PASSWORD_MISMATCH"
-	defaultTokenExpiry      = time.Hour * 24 * 7 // 1 week
+	defaultTokenExpiry      = constants.DefaultTokenExpiry
 )
 
 type SignupUser struct {
@@ -90,15 +90,28 @@ func (uc *Usecase) AdminSignin(ctx context.Context, req *request.SigninReq) *res
 		return invalidPasswordResponse
 	}
 
+	privileges, err := uc.repo.GetAccessPrivilegeByAdminID(ctx, adminCredentials.ID.String())
+	if err != nil {
+		return response.DBErrorResponse(err)
+	}
+
 	//generate token
-	token, err := jwttoken.GenerateToken(adminCredentials.ID, constants.RoleAdmin, nil, defaultTokenExpiry)
+	token, err := jwttoken.GenerateToken(
+		adminCredentials.ID,
+		constants.RoleAdmin,
+		map[string]interface{}{
+			constants.Privilege: privileges.AccessRoles,
+		},
+		defaultTokenExpiry,
+	)
 	if err != nil {
 		return response.ErrorResponse(http.StatusInternalServerError, respcode.InternalServerError, fmt.Errorf("error in generating token: %v", err))
 	}
 
 	return response.SuccessResponse(http.StatusOK, respcode.Success, map[string]interface{}{
-		"id":    adminCredentials.ID, //dev purpose
-		"token": token,
+		"id":         adminCredentials.ID, //dev purpose
+		"token":      token,
+		"privileges": privileges.AccessRoles,
 	})
 }
 

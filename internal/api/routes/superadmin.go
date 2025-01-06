@@ -21,9 +21,18 @@ func mountSuperAdminRoutes(app *fiber.App, handlers *di.Handlers) {
 		admin.Get("", handlers.Handler.GetAdmins)
 		admin.Get("/:id", handlers.Handler.GetAdminByID)
 		admin.Put("/:id", handlers.Handler.UpdateAdminByID)
-		admin.Delete("/:id", handlers.Handler.SoftDeleteRecordByUUID(models.Admins_TableName))
+		admin.Delete("/:id", handlers.Handler.SoftDeleteAccountByUUID(models.Admins_TableName))
 		admin.Patch("/undo-delete/:id", handlers.Handler.UndoSoftDeleteRecordByUUID(models.Admins_TableName))
 		admin.Patch("/activate/:id", handlers.Handler.ActivateByUUID(models.Admins_TableName))
-		admin.Patch("/deactivate/:id", handlers.Handler.DeactivateByUUID(models.Admins_TableName))
+		admin.Patch("/deactivate/:id", handlers.Handler.DeactivateAccountByUUID(models.Admins_TableName))
+	}
+
+	//access privileges
+	accessPrivileges := superAdmin.Group("/access-privileges")
+	{
+		accessPrivileges.Post("", handlers.Handler.CreateAccessPrivilege)
+		accessPrivileges.Get("", handlers.Handler.GetAccessPrivileges)
+		accessPrivileges.Get("/:admin_id", handlers.Handler.GetAccessPrivilegeByAdminID)
+		accessPrivileges.Delete("/:admin_id/:privilege", handlers.Handler.DeleteAccessPrivilege)
 	}
 }

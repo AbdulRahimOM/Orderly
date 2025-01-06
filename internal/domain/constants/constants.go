@@ -1,5 +1,7 @@
 package constants
 
+import "time"
+
 const (
 	Role   = "role"
 	UserID = "user_id"
@@ -26,4 +28,11 @@ const (
 	Order_Placed         = "placed"
 	Order_Cancelled      = "cancelled"
 	Order_Delivered      = "delivered"
+
+	//Token
+	DefaultTokenExpiry          = time.Hour * 24 * 30 // 1 month
+	Privilege                   = "privilege"
+	Privilege_User_Management   = "user_manager"
+	Privilege_Sales_Manager     = "sales_manager"
+	Privilege_Inventory_Manager = "inventory_manager"
 )

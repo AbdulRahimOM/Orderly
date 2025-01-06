@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 	"gorm.io/gorm"
 )
 
@@ -132,14 +133,14 @@ type OrderInListForUser struct {
 }
 
 type OrderForAdmin struct {
-	ID            uuid.UUID `gorm:"column:id;primaryKey" json:"id"`
-	UserID        uuid.UUID `gorm:"column:user_id" json:"userId"`
-	CustomerName  string    `gorm:"column:customer_name" json:"customerName"`
-	OrderTime     time.Time `gorm:"column:order_time" json:"orderTime"`
-	TotalAmount   float64   `gorm:"column:total_amount" json:"totalAmount"`
-	PaymentMethod string    `gorm:"column:payment_method" json:"paymentMethod"`
-	PaymentID     string    `gorm:"column:payment_id" json:"paymentId"`
-	OrderStatus   string    `gorm:"column:order_status" json:"orderStatus"`
+	ID            uuid.UUID  `gorm:"column:id;primaryKey" json:"id"`
+	UserID        uuid.UUID  `gorm:"column:user_id" json:"userId"`
+	CustomerName  string     `gorm:"column:customer_name" json:"customerName"`
+	OrderTime     time.Time  `gorm:"column:order_time" json:"orderTime"`
+	TotalAmount   float64    `gorm:"column:total_amount" json:"totalAmount"`
+	PaymentMethod string     `gorm:"column:payment_method" json:"paymentMethod"`
+	PaymentID     string     `gorm:"column:payment_id" json:"paymentId"`
+	OrderStatus   string     `gorm:"column:order_status" json:"orderStatus"`
 	CancelledAt   *time.Time `gorm:"column:cancelled_at" json:"cancelledAt,omitempty"`
 	DeliveredAt   *time.Time `gorm:"column:delivered_at" json:"deliveredAt,omitempty"`
 
@@ -155,12 +156,12 @@ type OrderForAdmin struct {
 }
 
 type OrderForUser struct {
-	ID            uuid.UUID `gorm:"column:id;primaryKey" json:"id"`
-	OrderTime     time.Time `gorm:"column:order_time" json:"orderTime"`
-	TotalAmount   float64   `gorm:"column:total_amount" json:"totalAmount"`
-	PaymentMethod string    `gorm:"column:payment_method" json:"paymentMethod"`
-	PaymentID     string    `gorm:"column:payment_id" json:"paymentId"`
-	OrderStatus   string    `gorm:"column:order_status" json:"orderStatus"`
+	ID            uuid.UUID  `gorm:"column:id;primaryKey" json:"id"`
+	OrderTime     time.Time  `gorm:"column:order_time" json:"orderTime"`
+	TotalAmount   float64    `gorm:"column:total_amount" json:"totalAmount"`
+	PaymentMethod string     `gorm:"column:payment_method" json:"paymentMethod"`
+	PaymentID     string     `gorm:"column:payment_id" json:"paymentId"`
+	OrderStatus   string     `gorm:"column:order_status" json:"orderStatus"`
 	CancelledAt   *time.Time `gorm:"column:cancelled_at" json:"cancelledAt,omitempty"`
 	DeliveredAt   *time.Time `gorm:"column:delivered_at" json:"deliveredAt,omitempty"`
 
@@ -180,4 +181,10 @@ type CartItemsForOrder struct {
 	Quantity         int     `gorm:"column:quantity" json:"quantity"`
 	CurrentSalePrice float64 `gorm:"column:current_sale_price" json:"currentSalePrice"`
 	CurrentStock     int     `gorm:"column:current_stock" json:"currentStock"`
+}
+
+type AccessPrivilege struct {
+	AdminID     uuid.UUID      `gorm:"column:admin_id;primaryKey" json:"adminId"`
+	AccessRoles pq.StringArray `gorm:"column:access_roles;type:text[]" json:"accessRoles"`
+	AdminName   string         `gorm:"column:admin_name" json:"adminName"`
 }

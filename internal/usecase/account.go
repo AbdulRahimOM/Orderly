@@ -7,6 +7,7 @@ import (
 	"orderly/internal/domain/request"
 	"orderly/internal/domain/respcode"
 	"orderly/internal/domain/response"
+	jwttoken "orderly/pkg/jwt-token"
 	"orderly/pkg/utils/email"
 	"orderly/pkg/utils/hashpassword"
 	"orderly/pkg/utils/helper"
@@ -118,17 +119,17 @@ func (uc *Usecase) GetUserAddressByID(ctx context.Context, id string) *response.
 }
 
 func (uc *Usecase) CreateUserAddress(ctx context.Context, req *request.UserAddressReq) *response.Response {
-	userID:=helper.GetUserIdFromContext(ctx)
+	userID := helper.GetUserIdFromContext(ctx)
 	address := models.Address{
-		ID:        uuid.New(),
-		UserID:    userID,
+		ID:       uuid.New(),
+		UserID:   userID,
 		House:    req.House,
-		Street1:   req.Street1,
-		Street2:   req.Street2,
+		Street1:  req.Street1,
+		Street2:  req.Street2,
 		City:     req.City,
 		State:    req.State,
-		Pincode: req.Pincode,
-		Country: req.Country,
+		Pincode:  req.Pincode,
+		Country:  req.Country,
 		Landmark: req.Landmark,
 	}
 
@@ -144,5 +145,45 @@ func (uc *Usecase) UpdateUserAddressByID(ctx context.Context, id string, req *re
 	if err != nil {
 		return response.DBErrorResponse(fmt.Errorf("error updating user address: %v", err))
 	}
+	return response.SuccessResponse(200, respcode.Success, nil)
+}
+
+func (uc *Usecase) CreateAccessPrivilege(ctx context.Context, req *request.AccessPrivilegeReq) *response.Response {
+	accessPrivilege := models.AdminPrivilege{
+		AdminID:    req.AdminID,
+		AccessRole: req.AccessRole,
+	}
+
+	if err := uc.repo.CreateRecord(ctx, &accessPrivilege); err != nil {
+		return accessPrivilege.GetResponseFromDBError(err)
+	}
+
+	return response.SuccessResponse(200, respcode.Success, nil)
+}
+
+func (uc *Usecase) GetAccessPrivileges(ctx context.Context) *response.Response {
+	accessPrivileges, err := uc.repo.GetAccessPrivileges(ctx)
+	if err != nil {
+		return response.DBErrorResponse(fmt.Errorf("error getting access privileges: %v", err))
+	}
+	return response.SuccessResponse(200, respcode.Success, accessPrivileges)
+}
+
+func (uc *Usecase) GetAccessPrivilegeByAdminID(ctx context.Context, adminID string) *response.Response {
+	accessPrivileges, err := uc.repo.GetAccessPrivilegeByAdminID(ctx, adminID)
+	if err != nil {
+		return response.DBErrorResponse(fmt.Errorf("error getting access privileges: %v", err))
+	}
+	return response.SuccessResponse(200, respcode.Success, accessPrivileges)
+}
+
+func (uc *Usecase) DeleteAccessPrivilege(ctx context.Context, adminID string, privilege string) *response.Response {
+	err := uc.repo.DeleteAccessPrivilege(ctx, adminID, privilege)
+	if err != nil {
+		return response.DBErrorResponse(fmt.Errorf("error deleting access privileges: %v", err))
+	}
+
+	jwttoken.RevokeExistingAuthToken(adminID)
+
 	return response.SuccessResponse(200, respcode.Success, nil)
 }
