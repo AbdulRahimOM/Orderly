@@ -8,10 +8,6 @@ const (
 	Unauthorized        = "UNAUTHORIZED"
 	Forbidden           = "FORBIDDEN"
 
-	// Other Authentication(middleware) related response codes
-	TokenExpired = "TOKEN_EXPIRED"
-	InvalidToken = "INVALID_TOKEN"
-
 	ParsingFormDataErr   = "PARSING_FORM_DATA_ERROR"
 	BadRequest           = "BAD REQUEST DATA"
 	WrongInput           = "WRONG_INPUT"

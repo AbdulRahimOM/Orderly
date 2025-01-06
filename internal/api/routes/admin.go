@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"orderly/internal/api/middleware"
+	"orderly/internal/domain/constants"
 	"orderly/internal/domain/models"
 	"orderly/internal/infrastructure/di"
 
@@ -8,14 +10,17 @@ import (
 )
 
 func mountAdminRoutes(app *fiber.App, handlers *di.Handlers) {
-	admin := app.Group("/admin")
+	admin := app.Group("/admin",
+		middleware.ValidateJWT,
+		middleware.ValidateAnyOfTheseRoles(constants.RoleAdmin),
+	)
 	{
 		// account:= admin.Group("/account")
 		// {
 		// 	account.Post("/change-password", handlers.Handler.ChangePassword)
 		// }
 
-		users := admin.Group("/users")
+		users := admin.Group("/users", middleware.HavePrivilege(constants.Privilege_User_Management))
 		{
 			users.Get("", handlers.Handler.GetUsers)
 			users.Get("/:id", handlers.Handler.GetUserByID)
@@ -25,7 +30,7 @@ func mountAdminRoutes(app *fiber.App, handlers *di.Handlers) {
 			users.Patch("/undo-delete/:id", handlers.Handler.UndoSoftDeleteRecordByUUID(models.Users_TableName))
 		}
 
-		category:= admin.Group("/category")
+		category := admin.Group("/category", middleware.HavePrivilege(constants.Privilege_Inventory_Manager))
 		{
 			category.Post("", handlers.Handler.CreateCategory)
 			category.Get("", handlers.Handler.GetCategories)
@@ -35,7 +40,7 @@ func mountAdminRoutes(app *fiber.App, handlers *di.Handlers) {
 			category.Patch("/undo-delete/:id", handlers.Handler.UndoSoftDeleteRecordByID(models.Category_TableName))
 		}
 
-		product:= admin.Group("/product")
+		product := admin.Group("/product", middleware.HavePrivilege(constants.Privilege_Inventory_Manager))
 		{
 			product.Post("", handlers.Handler.CreateProduct)
 			product.Get("", handlers.Handler.GetProducts)
@@ -47,7 +52,7 @@ func mountAdminRoutes(app *fiber.App, handlers *di.Handlers) {
 			product.Put("/stock/add/:id", handlers.Handler.AddProductStockByID)
 		}
 
-		order:= admin.Group("/order")
+		order := admin.Group("/order", middleware.HavePrivilege(constants.Privilege_Sales_Manager))
 		{
 			order.Get("", handlers.Handler.GetOrders)
 			order.Get("/:id", handlers.Handler.GetOrderDetails)

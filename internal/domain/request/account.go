@@ -1,6 +1,6 @@
 package request
 
-
+import "github.com/google/uuid"
 
 type SigninReq struct {
 	Username string `json:"username" validate:"required"`
@@ -35,12 +35,17 @@ type UpdateAdminReq struct {
 }
 
 type UserAddressReq struct {
-    House    string    `gorm:"column:house" json:"house"`
-    Street1  string    `gorm:"column:street1" json:"street1"`
-    Street2  string    `gorm:"column:street2" json:"street2"`
-    City     string    `gorm:"column:city" json:"city"`
-    State    string    `gorm:"column:state" json:"state"`
-    Pincode  string    `gorm:"column:pincode" json:"pincode"`
-    Landmark string    `gorm:"column:landmark" json:"landmark"`
-    Country  string    `gorm:"column:country" json:"country"`
+	House    string `gorm:"column:house" json:"house"`
+	Street1  string `gorm:"column:street1" json:"street1"`
+	Street2  string `gorm:"column:street2" json:"street2"`
+	City     string `gorm:"column:city" json:"city"`
+	State    string `gorm:"column:state" json:"state"`
+	Pincode  string `gorm:"column:pincode" json:"pincode"`
+	Landmark string `gorm:"column:landmark" json:"landmark"`
+	Country  string `gorm:"column:country" json:"country"`
+}
+
+type AccessPrivilegeReq struct {
+	AdminID    uuid.UUID `json:"admin_id" validate:"required"`
+	AccessRole string    `json:"access_role" validate:"required"` //inventory_manager, sales_manager, user_manager
 }
