@@ -32,6 +32,16 @@ func mountUserRoutes(app *fiber.App, handlers *di.Handlers) {
 				address.Delete("/:id", handlers.Handler.HardDeleteRecordByUUID(models.Addresses_TableName))
 			}
 		}
+
+		cart := user.Group("/cart")
+		{
+			cart.Get("", handlers.Handler.GetCart)
+			cart.Put("", handlers.Handler.AddToCart)
+			cart.Delete("/product/:id", handlers.Handler.RemoveProductFromCart)
+			cart.Patch("/update-quantity", handlers.Handler.UpdateCartItemQuantity)
+			cart.Delete("/clear", handlers.Handler.ClearCart)
+		}
+
 	}
 
 }
