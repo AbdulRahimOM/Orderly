@@ -3,24 +3,27 @@ package constants
 const (
 	Role   = "role"
 	UserID = "user_id"
-)
 
-const (
+	// Pagination, Get request
 	Param_IncludeDeleted = "includeDeleted"
 	Param_Limit          = "limit"
 	Param_Page           = "p"
 	Param_Offset         = "offset"
-)
 
-const (
+	// Roles
 	RoleSuperAdmin = "superadmin"
 	RoleAdmin      = "admin"
 	RoleUser       = "user"
-
 	UnverifiedUser = "unverifiedUser"
-)
 
-// Development purpose:
-const (
+	// Development purpose:
 	UniversalPassword = "password"
+
+	// Order Status
+	PaymentMethod_COD    = "COD"
+	PaymentMethod_Online = "Online Payment"
+	Order_Pending        = "pending"
+	Order_Placed         = "placed"
+	Order_Cancelled      = "cancelled"
+	Order_Delivered      = "delivered"
 )
