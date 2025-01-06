@@ -91,7 +91,7 @@ func (uc *Usecase) AdminSignin(ctx context.Context, req *request.SigninReq) *res
 	}
 
 	//generate token
-	token, err := jwttoken.GenerateToken(adminCredentials.ID, constants.RoleSuperAdmin, nil, defaultTokenExpiry)
+	token, err := jwttoken.GenerateToken(adminCredentials.ID, constants.RoleAdmin, nil, defaultTokenExpiry)
 	if err != nil {
 		return response.ErrorResponse(http.StatusInternalServerError, respcode.InternalServerError, fmt.Errorf("error in generating token: %v", err))
 	}
@@ -117,7 +117,7 @@ func (uc *Usecase) UserSignin(ctx context.Context, req *request.SigninReq) *resp
 	}
 
 	//generate token
-	token, err := jwttoken.GenerateToken(userCredentials.ID, constants.RoleSuperAdmin, nil, defaultTokenExpiry)
+	token, err := jwttoken.GenerateToken(userCredentials.ID, constants.RoleUser, nil, defaultTokenExpiry)
 	if err != nil {
 		return response.ErrorResponse(http.StatusInternalServerError, respcode.InternalServerError, fmt.Errorf("error in generating token: %v", err))
 	}

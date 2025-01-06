@@ -10,7 +10,7 @@ import (
 )
 
 // SoftDeleteRecordByID
-func (uc *Usecase) SoftDeleteRecordByID(ctx context.Context, tableName string, id int) *response.Response {
+func (uc *Usecase) SoftDeleteRecordByID(ctx context.Context, tableName string, id any) *response.Response {
 	err := uc.repo.SoftDeleteRecordByID(ctx, tableName, id)
 	if err != nil {
 		return response.DBErrorResponse(err)
@@ -19,7 +19,7 @@ func (uc *Usecase) SoftDeleteRecordByID(ctx context.Context, tableName string, i
 	return response.SuccessResponse(fiber.StatusOK, respcode.Success, nil)
 }
 
-func (uc *Usecase) UndoSoftDeleteRecordByID(ctx context.Context, tableName string, id int) *response.Response {
+func (uc *Usecase) UndoSoftDeleteRecordByID(ctx context.Context, tableName string, id any) *response.Response {
 	responsecode, err := uc.repo.UndoSoftDeleteRecordByID(ctx, tableName, id)
 	if err != nil {
 		if responsecode == respcode.UniqueFieldViolation {
@@ -34,8 +34,9 @@ func (uc *Usecase) UndoSoftDeleteRecordByID(ctx context.Context, tableName strin
 	return response.SuccessResponse(fiber.StatusOK, respcode.Success, nil)
 }
 
-func (uc *Usecase) SoftDeleteRecordByUUID(ctx context.Context, tableName string, id string) *response.Response {
-	err := uc.repo.SoftDeleteRecordByUUID(ctx, tableName, id)
+
+func (uc *Usecase) ActivateByID(ctx context.Context, tableName string, id any) *response.Response {
+	err := uc.repo.ActivateByID(ctx, tableName, id)
 	if err != nil {
 		return response.DBErrorResponse(err)
 	}
@@ -43,20 +44,8 @@ func (uc *Usecase) SoftDeleteRecordByUUID(ctx context.Context, tableName string,
 	return response.SuccessResponse(fiber.StatusOK, respcode.Success, nil)
 }
 
-func (uc *Usecase) UndoSoftDeleteRecordByUUID(ctx context.Context, tableName string, id string) *response.Response {
-	responsecode, err := uc.repo.UndoSoftDeleteRecordByUUID(ctx, tableName, id)
-	if err != nil {
-		if responsecode == respcode.UniqueFieldViolation {
-			return response.ErrorResponse(http.StatusConflict, respcode.UniqueFieldViolation, err)
-		}
-		return response.DBErrorResponse(err)
-	}
-
-	return response.SuccessResponse(fiber.StatusOK, respcode.Success, nil)
-}
-
-func (uc *Usecase) ActivateByUUID(ctx context.Context, tableName string, id string) *response.Response {
-	err := uc.repo.ActivateByUUID(ctx, tableName, id)
+func (uc *Usecase) DeactivateByID(ctx context.Context, tableName string, id string) *response.Response {
+	err := uc.repo.DeactivateByID(ctx, tableName, id)
 	if err != nil {
 		return response.DBErrorResponse(err)
 	}
@@ -64,16 +53,7 @@ func (uc *Usecase) ActivateByUUID(ctx context.Context, tableName string, id stri
 	return response.SuccessResponse(fiber.StatusOK, respcode.Success, nil)
 }
 
-func (uc *Usecase) DeactivateByUUID(ctx context.Context, tableName string, id string) *response.Response {
-	err := uc.repo.DeactivateByUUID(ctx, tableName, id)
-	if err != nil {
-		return response.DBErrorResponse(err)
-	}
-
-	return response.SuccessResponse(fiber.StatusOK, respcode.Success, nil)
-}
-
-func (uc *Usecase) HardDeleteRecordByID(ctx context.Context, tableName string, id string) *response.Response {
+func (uc *Usecase) HardDeleteRecordByID(ctx context.Context, tableName string, id any) *response.Response {
 	err := uc.repo.HardDeleteRecordByID(ctx, tableName, id)
 	if err != nil {
 		return response.DBErrorResponse(err)
@@ -81,3 +61,4 @@ func (uc *Usecase) HardDeleteRecordByID(ctx context.Context, tableName string, i
 
 	return response.SuccessResponse(fiber.StatusOK, respcode.Success, nil)
 }
+

@@ -60,3 +60,40 @@ func (h *Handler) GetUserByID(c *fiber.Ctx) error {
 	response := h.uc.GetUserByID(c.Context(), id)
 	return response.WriteToJSON(c)
 }
+
+func (h *Handler) GetUserProfile(c *fiber.Ctx) error {
+	response := h.uc.GetUserProfile(c.Context())
+	return response.WriteToJSON(c)
+}
+
+func (h *Handler) GetUserAddresses(c *fiber.Ctx) error {
+	response := h.uc.GetUserAddresses(c.Context())
+	return response.WriteToJSON(c)
+}
+
+func (h *Handler) GetUserAddressByID(c *fiber.Ctx) error {
+	id := c.Params("id")
+	response := h.uc.GetUserAddressByID(c.Context(), id)
+	return response.WriteToJSON(c)
+}
+
+func (h *Handler) CreateUserAddress(c *fiber.Ctx) error {
+	req := new(request.UserAddressReq)
+	if ok, err := validation.BindAndValidateJSONRequest(c, req); !ok {
+		return err
+	}
+
+	response := h.uc.CreateUserAddress(c.Context(), req)
+	return response.WriteToJSON(c)
+}
+
+func (h *Handler) UpdateUserAddressByID(c *fiber.Ctx) error {
+	id := c.Params("id")
+	req := new(request.UserAddressReq)
+	if ok, err := validation.BindAndValidateJSONRequest(c, req); !ok {
+		return err
+	}
+
+	response := h.uc.UpdateUserAddressByID(c.Context(), id, req)
+	return response.WriteToJSON(c)
+}
