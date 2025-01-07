@@ -132,31 +132,10 @@ type OrderInListForUser struct {
 	OrderStatus   string    `gorm:"column:order_status" json:"orderStatus"`
 }
 
-type OrderForAdmin struct {
+type OrderDetailed struct {
 	ID            uuid.UUID  `gorm:"column:id;primaryKey" json:"id"`
 	UserID        uuid.UUID  `gorm:"column:user_id" json:"userId"`
 	CustomerName  string     `gorm:"column:customer_name" json:"customerName"`
-	OrderTime     time.Time  `gorm:"column:order_time" json:"orderTime"`
-	TotalAmount   float64    `gorm:"column:total_amount" json:"totalAmount"`
-	PaymentMethod string     `gorm:"column:payment_method" json:"paymentMethod"`
-	PaymentID     string     `gorm:"column:payment_id" json:"paymentId"`
-	OrderStatus   string     `gorm:"column:order_status" json:"orderStatus"`
-	CancelledAt   *time.Time `gorm:"column:cancelled_at" json:"cancelledAt,omitempty"`
-	DeliveredAt   *time.Time `gorm:"column:delivered_at" json:"deliveredAt,omitempty"`
-
-	//Shipping Address
-	House    string `gorm:"column:house" json:"house"`
-	Street1  string `gorm:"column:street1" json:"street1"`
-	Street2  string `gorm:"column:street2" json:"street2"`
-	City     string `gorm:"column:city" json:"city"`
-	State    string `gorm:"column:state" json:"state"`
-	Pincode  string `gorm:"column:pincode" json:"pincode"`
-	Landmark string `gorm:"column:landmark" json:"landmark"`
-	Country  string `gorm:"column:country" json:"country"`
-}
-
-type OrderForUser struct {
-	ID            uuid.UUID  `gorm:"column:id;primaryKey" json:"id"`
 	OrderTime     time.Time  `gorm:"column:order_time" json:"orderTime"`
 	TotalAmount   float64    `gorm:"column:total_amount" json:"totalAmount"`
 	PaymentMethod string     `gorm:"column:payment_method" json:"paymentMethod"`

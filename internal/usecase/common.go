@@ -44,7 +44,7 @@ func (uc *Usecase) ActivateByID(ctx context.Context, tableName string, id any) *
 	return response.SuccessResponse(fiber.StatusOK, respcode.Success, nil)
 }
 
-func (uc *Usecase) DeactivateByID(ctx context.Context, tableName string, id string) *response.Response {
+func (uc *Usecase) DeactivateByID(ctx context.Context, tableName string, id any) *response.Response {
 	err := uc.repo.DeactivateByID(ctx, tableName, id)
 	if err != nil {
 		return response.DBErrorResponse(err)

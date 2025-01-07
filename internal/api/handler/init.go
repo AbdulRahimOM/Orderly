@@ -1,21 +1,11 @@
 package handler
 
-import uc "orderly/internal/usecase"
-
-// import usecase "orderly/internal/usecase/interface"
-
-// type Handler struct {
-// 	uc usecase.Usecase
-// }
-
-// func NewHandler(uc usecase.Usecase) *Handler {
-// 	return &Handler{uc: uc}
-// }
+import usecase "orderly/internal/usecase/interface"
 
 type Handler struct {
-	uc *uc.Usecase
+	uc usecase.Usecase
 }
 
-func NewHandler(uc *uc.Usecase) *Handler {
+func NewHandler(uc usecase.Usecase) *Handler {
 	return &Handler{uc: uc}
 }

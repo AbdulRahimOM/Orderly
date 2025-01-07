@@ -25,11 +25,11 @@ func GetHandlers(db *gorm.DB) *Handlers {
 		config.Configs.Twilio.ServiceSid,
 		config.Configs.DevelopmentConfig.Dev_BypassOtp,
 	)
-	accountUsecase := uc.NewUsecase(repo, twilioClient)
+	usecase := uc.NewUsecase(repo, twilioClient)
 
-	accountHandler := handler.NewHandler(accountUsecase)
+	handler := handler.NewHandler(usecase)
 
 	return &Handlers{
-		Handler: accountHandler,
+		Handler: handler,
 	}
 }

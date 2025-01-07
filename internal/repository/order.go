@@ -77,8 +77,8 @@ func (r *Repo) GetMyOrders(ctx context.Context, req *request.Pagination) ([]*dto
 	return orders, nil
 }
 
-func (r *Repo) GetOrderDetails(ctx context.Context, id string) (*dto.OrderForAdmin, error) {
-	var order dto.OrderForAdmin
+func (r *Repo) GetOrderDetails(ctx context.Context, id string) (*dto.OrderDetailed, error) {
+	var order dto.OrderDetailed
 	err := r.db.WithContext(ctx).Raw(`
 		SELECT
 			o.id,
@@ -156,7 +156,7 @@ func (r *Repo) GetCartItemsForOrder(ctx context.Context) ([]*dto.CartItemsForOrd
 }
 
 // CreateOrderFromCart(ctx context.Context, req *request.CreateOrderReq) (orderID int, responsecode string, err error)
-func (r *Repo) CreateOrder(ctx context.Context, order *models.Order, orderProducts []*models.OrderProduct) (int error) {
+func (r *Repo) CreateOrder(ctx context.Context, order *models.Order, orderProducts []*models.OrderProduct) error {
 
 	var (
 		err error
