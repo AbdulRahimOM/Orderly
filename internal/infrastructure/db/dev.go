@@ -21,7 +21,7 @@ func resetDBFlagCalled() bool {
 
 // ResetDB is a handler to reset the database. Its for development purpose only.
 func ResetDB(c *fiber.Ctx) error {
-
+if config.Configs.DevelopmentConfig.Dev_Mode {
 	err := ClearDB()
 	if err != nil {
 		return response.ErrorResponse(500, "failed to clear the database:", err).WriteToJSON(c)
@@ -31,6 +31,9 @@ func ResetDB(c *fiber.Ctx) error {
 
 	fmt.Println("Database reset successful")
 	return response.SuccessResponse(200, "Database reset successfully", nil).WriteToJSON(c)
+}else{
+	return response.ErrorResponse(403, "NOT_IN_DEV_MODE",fmt.Errorf("You are not authorized to perform this operation. You are not in development mode")).WriteToJSON(c)
+}
 }
 
 func ClearDB() error {

@@ -29,7 +29,6 @@ type PostgresConn struct {
 
 type DevelopmentConfig struct {
 	Dev_AllowUniversalPassword bool `mapstructure:"DEVMODE_ALLOW_UNIVERSAL_PASSWORD"`
-	Dev_AutoMigrateDbOnStart   bool `mapstructure:"DEVMODE_AUTO_MIGRATE_DB_ON_START"`
 	Dev_BypassOtp              bool `mapstructure:"DEVMODE_BYPASS_OTP"`
 	Dev_AllowSendingEmails     bool `mapstructure:"DEVMODE_ALLOW_SENDING_EMAILS"`
 	Dev_LogCredentials         bool `mapstructure:"DEVMODE_LOG_CREDENTIALS"`
@@ -51,8 +50,8 @@ type Emailing struct {
 
 var (
 	InitialData struct {
-		SuperAdminUsername string
-		SuperAdminPassword string
+		SuperAdminUsername string `mapstructure:"INITIAL_SUPER_ADMIN_USERNAME"`
+		SuperAdminPassword string `mapstructure:"INITIAL_SUPER_ADMIN_PASSWORD"`
 	}
 
 	Configs struct {
@@ -66,21 +65,56 @@ var (
 
 func loadConfig() {
 	viper.AutomaticEnv()
-	viper.SetConfigName(".env")
-	viper.AddConfigPath(".")
-	viper.SetConfigType("env")
-	err := viper.ReadInConfig()
-	if err != nil {
-		log.Fatalln("error occured while reading env variables, error:", err)
-	}
+	if environment := viper.GetString("ENVIRONMENT"); environment == "LOCAL" {
 
-	err = viper.Unmarshal(&Configs)
-	if err != nil {
-		log.Fatalln("error occured while writing env values onto variables, error:", err)
-	}
+		viper.SetConfigName(".env")
+		viper.AddConfigPath(".")
+		viper.SetConfigType("env")
+		err := viper.ReadInConfig()
+		if err != nil {
+			log.Fatalln("error occured while reading env variables, error:", err)
+		}
 
-	InitialData.SuperAdminUsername = viper.GetString("INITIAL_SUPER_ADMIN_USERNAME")
-	InitialData.SuperAdminPassword = viper.GetString("INITIAL_SUPER_ADMIN_PASSWORD")
+		err = viper.Unmarshal(&Configs)
+		if err != nil {
+			log.Fatalln("error occured while writing env values onto variables, error:", err)
+		}
+
+		err = viper.Unmarshal(&InitialData)
+		if err != nil {
+			log.Fatalln("error occured while writing env values onto variables, error:", err)
+		}
+	} else {
+		Configs.PostgresConn.DbHost = viper.GetString("DB_HOST")
+		Configs.PostgresConn.DbUser = viper.GetString("DB_USER")
+		Configs.PostgresConn.DbPassword = viper.GetString("DB_PASSWORD")
+		Configs.PostgresConn.DbPort = viper.GetString("DB_PORT")
+		Configs.PostgresConn.DbName = viper.GetString("DB_NAME")
+		Configs.PostgresConn.DbSslMode = viper.GetString("DB_SSL_MODE")
+
+		Configs.Env.Port = viper.GetString("PORT")
+		Configs.Env.JwtSecretKey = viper.GetString("JWT_SECRET_KEY")
+		Configs.Env.Environment = viper.GetString("ENVIRONMENT")
+		Configs.Env.CORSAllowedOrigins = viper.GetString("CORS_ALLOWED_ORIGINS")
+
+		Configs.DevelopmentConfig.Dev_AllowUniversalPassword = viper.GetBool("DEVMODE_ALLOW_UNIVERSAL_PASSWORD")
+		Configs.DevelopmentConfig.Dev_BypassOtp = viper.GetBool("DEVMODE_BYPASS_OTP")
+		Configs.DevelopmentConfig.Dev_AllowSendingEmails = viper.GetBool("DEVMODE_ALLOW_SENDING_EMAILS")
+		Configs.DevelopmentConfig.Dev_LogCredentials = viper.GetBool("DEVMODE_LOG_CREDENTIALS")
+		Configs.DevelopmentConfig.Dev_Mode = viper.GetBool("DEV_MODE")
+
+		Configs.Twilio.AccountSid = viper.GetString("TWILIO_ACCOUNT_SID")
+		Configs.Twilio.AuthToken = viper.GetString("TWILIO_AUTH_TOKEN")
+		Configs.Twilio.ServiceSid = viper.GetString("TWILIO_SERVICE_SID")
+
+		Configs.Emailing.FromEmail = viper.GetString("EMAIL_FROM")
+		Configs.Emailing.AppPassword = viper.GetString("EMAIL_APP_PASSWORD")
+		Configs.Emailing.SmtpServerAddress = viper.GetString("SMTP_SERVER_ADDRESS")
+		Configs.Emailing.SmtpsPort = viper.GetString("SMTPS_PORT")
+
+		InitialData.SuperAdminUsername = viper.GetString("INITIAL_SUPER_ADMIN_USERNAME")
+		InitialData.SuperAdminPassword = viper.GetString("INITIAL_SUPER_ADMIN_PASSWORD")
+	}
 
 	fmt.Println("Envirnment variables loaded successfully")
 }
