@@ -137,46 +137,44 @@ export INITIAL_SUPER_ADMIN_PASSWORD=initialSuperAdminPassword
 ```
 
 ## API Documentation
-
 ### Browse Endpoints (public)
-- `GET /browse/category` - List categories
-- `GET /browse/category/:id` - Get category details
-- `GET /browse/product` - List products
-- `GET /browse/product/:id` - Get product details
+- 📄 `GET /browse/category` - List categories
+- 🔍 `GET /browse/category/:id` - Get category details
+- 📄 `GET /browse/product` - List products
+- 🔍 `GET /browse/product/:id` - Get product details
 
 #### Authentication Endpoints
-- `POST /login/superAdmin` - Super admin login
-- `POST /login/admin` - Admin login
-- `POST /login/user` - User login
-- `POST /user-signup-get-otp` - Get OTP for user signup
-- `POST /user-signup-verify-otp` - Verify OTP and complete signup
+- 🔑 `POST /login/superAdmin` - Super admin login
+- 🔑 `POST /login/admin` - Admin login
+- 🔑 `POST /login/user` - User login
+- 🔑 `POST /user-signup-get-otp` - Get OTP for user signup
+- 🔑 `POST /user-signup-verify-otp` - Verify OTP and complete signup
 
 ### Super Admin Endpoints
 #### Admin Management
-- `POST /superAdmin/admin` - Create admin
-- `GET /superAdmin/admin` - List admins
-- `GET /superAdmin/admin/:id` - Get admin details
-- `PUT /superAdmin/admin/:id` - Update admin
-- `DELETE /superAdmin/admin/:id` - Soft delete admin
-- `PATCH /superAdmin/admin/undo-delete/:id` - Undo soft delete admin
-- `PATCH /superAdmin/admin/activate/:id` - Activate admin
-- `PATCH /superAdmin/admin/deactivate/:id` - Deactivate admin
+- ➕ `POST /superAdmin/admin` - Create admin
+- 📄 `GET /superAdmin/admin` - List admins
+- 🔍 `GET /superAdmin/admin/:id` - Get admin details
+- ✏️ `PUT /superAdmin/admin/:id` - Update admin
+- 🗑️ `DELETE /superAdmin/admin/:id` - Soft delete admin
+- 🔄 `PATCH /superAdmin/admin/undo-delete/:id` - Undo soft delete admin
+- ✅ `PATCH /superAdmin/admin/activate/:id` - Activate admin
+- 🚫 `PATCH /superAdmin/admin/deactivate/:id` - Deactivate admin
 
 #### Access-role management
-- `POST /superAdmin/access-privileges` - Create access privilege
-- `GET /superAdmin/access-privileges` - List access privileges
-- `GET /superAdmin/access-privileges/:admin_id` - Get access privilege by admin ID
-- `DELETE /superAdmin/access-privileges/:admin_id/:privilege` - Delete access privilege
-
+- ➕ `POST /superAdmin/access-privileges` - Create access privilege
+- 📄 `GET /superAdmin/access-privileges` - List access privileges
+- 🔍 `GET /superAdmin/access-privileges/:admin_id` - Get access privilege by admin ID
+- 🗑️ `DELETE /superAdmin/access-privileges/:admin_id/:privilege` - Delete access privilege
 
 ### Admin Endpoints
 #### User account management: *(Available only for access-role `user_manager`)*
-- `GET /admin/users` - List users
-- `GET /admin/users/:id` - Get user details
-- `PATCH /admin/users/activate/:id` - Activate user
-- `PATCH /admin/users/deactivate/:id` - Deactivate user
-- `DELETE /admin/users/:id` - Soft delete user
-- `PATCH /admin/users/undo-delete/:id` - Undo soft delete user
+- 📄 `GET /admin/users` - List users
+- 🔍 `GET /admin/users/:id` - Get user details
+- ✅ `PATCH /admin/users/activate/:id` - Activate user
+- 🚫 `PATCH /admin/users/deactivate/:id` - Deactivate user
+- 🗑️ `DELETE /admin/users/:id` - Soft delete user
+- 🔄 `PATCH /admin/users/undo-delete/:id` - Undo soft delete user
 
 #### Inventory Management *(Available only for access-role `inventory_manager`)*
 #### ➤ Category Endpoints
@@ -187,44 +185,43 @@ export INITIAL_SUPER_ADMIN_PASSWORD=initialSuperAdminPassword
 - 🗑️ `DELETE /admin/category/:id` - Soft delete category
 - 🔄 `PATCH /admin/category/undo-delete/:id` - Undo soft delete category
 
-#### -> Product Endpoints
-- `POST /admin/product` - Create product
-- `GET /admin/product` - List products
-- `GET /admin/product/:id` - Get product details
-- `PUT /admin/product/:id` - Update product
-- `DELETE /admin/product/:id` - Soft delete product
-- `PATCH /admin/product/undo-delete/:id` - Undo soft delete product
-- `GET /admin/product/stock/:id` - Get product stock details
-- `PUT /admin/product/stock/add/:id` - Add product stock
+#### ➤ Product Endpoints
+- ➕ `POST /admin/product` - Create product
+- 📄 `GET /admin/product` - List products
+- 🔍 `GET /admin/product/:id` - Get product details
+- ✏️ `PUT /admin/product/:id` - Update product
+- 🗑️ `DELETE /admin/product/:id` - Soft delete product
+- 🔄 `PATCH /admin/product/undo-delete/:id` - Undo soft delete product
+- 📦 `GET /admin/product/stock/:id` - Get product stock details
+- ➕ `PUT /admin/product/stock/add/:id` - Add product stock
 
 #### Order Endpoints *(Available only for access-role `sales_manager`)*
-- `GET /admin/order` - List all orders
-- `GET /admin/order/:id` - Get order details
-- `PATCH /admin/order/cancel/:id` - Cancel order
-- `PATCH /admin/order/mark-as-delivered/:id` - Mark order as delivered
+- 📄 `GET /admin/order` - List all orders
+- 🔍 `GET /admin/order/:id` - Get order details
+- 🚫 `PATCH /admin/order/cancel/:id` - Cancel order
+- ✅ `PATCH /admin/order/mark-as-delivered/:id` - Mark order as delivered
 
 ### User Endpoints 
 #### Account Management
-- `GET /user/account/profile` - Get user profile
-- `GET /user/account/address` - List user addresses
-- `GET /user/account/address/:id` - Get user address by ID
-- `POST /user/account/address` - Create user address
-- `PUT /user/account/address/:id` - Update user address by ID
-- `DELETE /user/account/address/:id` - Delete user address by ID
+- 🔍 `GET /user/account/profile` - Get user profile
+- 📄 `GET /user/account/address` - List user addresses
+- 🔍 `GET /user/account/address/:id` - Get user address by ID
+- ➕ `POST /user/account/address` - Create user address
+- ✏️ `PUT /user/account/address/:id` - Update user address by ID
+- 🗑️ `DELETE /user/account/address/:id` - Delete user address by ID
 
 #### Cart Management
-- `GET /user/cart` - Get user cart
-- `PUT /user/cart` - Add to cart
-- `DELETE /user/cart/product/:id` - Remove product from cart
-- `PATCH /user/cart/update-quantity` - Update cart item quantity
-- `DELETE /user/cart/clear` - Clear cart
+- 📄 `GET /user/cart` - Get user cart
+- ➕ `PUT /user/cart` - Add to cart
+- 🗑️ `DELETE /user/cart/product/:id` - Remove product from cart
+- ✏️ `PATCH /user/cart/update-quantity` - Update cart item quantity
+- 🗑️ `DELETE /user/cart/clear` - Clear cart
 
 #### Order Management
-- `GET /user/order` - List user orders
-- `GET /user/order/:id` - Get user order details
-- `POST /user/order` - Create order
-- `PATCH /user/order/cancel/:id` - Cancel order
-
+- 📄 `GET /user/order` - List user orders
+- 🔍 `GET /user/order/:id` - Get user order details
+- ➕ `POST /user/order` - Create order
+- 🚫 `PATCH /user/order/cancel/:id` - Cancel order
 
 ## Contributing
 
