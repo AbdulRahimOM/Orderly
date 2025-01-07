@@ -65,7 +65,7 @@ var (
 
 func loadConfig() {
 	viper.AutomaticEnv()
-	if environment := viper.GetString("ENVIRONMENT"); environment == "LOCAL" {
+	if environment := viper.GetString("ENVIRONMENT"); environment == "LOCAL" || environment == "" {
 
 		viper.SetConfigName(".env")
 		viper.AddConfigPath(".")
