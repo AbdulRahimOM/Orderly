@@ -16,16 +16,13 @@ func init() {
 		if err := ClearDB(); err != nil {
 			log.Fatal("Couldn't clear the database. Error:", err)
 		}
-	}
 
-	InitDB() //initialize the public database (create tables and seed super admin)
+		InitDB() //initialize the public database (create tables and seed super admin)
+	}
 }
 
-func InitDB() { //is called in init function
-
-	if config.Configs.Dev_AutoMigrateDbOnStart {
-		migratePublicTables(DB)
-	}
+func InitDB() {
+	migratePublicTables(DB)
 	initiateSuperAdmin(DB)
 }
 
