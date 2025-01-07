@@ -41,6 +41,12 @@ Orderly is a robust backend system built with Go that handles order processing a
 - **Scheduling:** Cron package for scheduled tasks
 - **Monitoring:** Prometheus
 
+## Prerequisites
+
+- Go 1.23 or higher
+- PostgreSQL 14 or higher
+- Make (optional, for using Makefile commands)
+
 ## Project Structure
 ```bash
 orderly/
@@ -66,74 +72,6 @@ orderly/
     ├── twilio/ # Twilio integration
     ├── utils/ # Utility functions
     └── validation/ # Validation utilities
-```
-
-## Prerequisites
-
-- Go 1.23 or higher
-- PostgreSQL 14 or higher
-- Make (optional, for using Makefile commands)
-
-## Getting Started
-
-1. Clone the repository
-```bash
-git clone https://github.com/AbdulRahimOM/Orderly.git
-cd Orderly
-```
-
-2. Set up environment variables
-
-```bash
-cp .env.example .env
-```
-
- Edit .env with your configuration
-
-3. Install dependencies
-```bash
-go mod download
-```
-
-4. Set up the database
-
-Enter postgres CLI:
-```bash
-psql -h localhost -p 5432 -U postgres -d orderly
-```
-In postgres, enter this to create database
-```sql
-CREATE DATABASE orderly;
-```
-
-5. Run migrations
-```bash
-go run cmd/migrate/main.go
-```
-
-6. Start the server
-```bash
-go run cmd/main.go
-```
-
-## Environment Variables
-
-Key environment variables needed:
-```env
-PORT="6000"
-JWT_SECRET_KEY="your_secret_key"
-DB_HOST="localhost"
-DB_USER="postgres"
-DB_PASSWORD="your_db_password"
-DB_NAME="orderly"
-INITIAL_SUPER_ADMIN_USERNAME="initialSuperAdminUsername"
-INITIAL_SUPER_ADMIN_PASSWORD="initialSuperAdminPassword"
-```
-
-Export initial super admin credentials if running in locally
-```bash
-export INITIAL_SUPER_ADMIN_USERNAME=superAdmin
-export INITIAL_SUPER_ADMIN_PASSWORD=initialSuperAdminPassword
 ```
 
 ## API Documentation
@@ -222,6 +160,68 @@ export INITIAL_SUPER_ADMIN_PASSWORD=initialSuperAdminPassword
 - 🔍 `GET /user/order/:id` - Get user order details
 - ➕ `POST /user/order` - Create order
 - 🚫 `PATCH /user/order/cancel/:id` - Cancel order
+
+## Getting Started
+
+1. Clone the repository
+```bash
+git clone https://github.com/AbdulRahimOM/Orderly.git
+cd Orderly
+```
+
+2. Set up environment variables
+
+```bash
+cp .env.example .env
+```
+
+ Edit .env with your configuration
+
+3. Install dependencies
+```bash
+go mod download
+```
+
+4. Set up the database
+
+Enter postgres CLI:
+```bash
+psql -h localhost -p 5432 -U postgres -d orderly
+```
+In postgres, enter this to create database
+```sql
+CREATE DATABASE orderly;
+```
+
+5. Run migrations
+```bash
+go run cmd/migrate/main.go
+```
+
+6. Start the server
+```bash
+go run cmd/main.go
+```
+
+## Environment Variables
+
+Key environment variables needed:
+```env
+PORT="6000"
+JWT_SECRET_KEY="your_secret_key"
+DB_HOST="localhost"
+DB_USER="postgres"
+DB_PASSWORD="your_db_password"
+DB_NAME="orderly"
+INITIAL_SUPER_ADMIN_USERNAME="initialSuperAdminUsername"
+INITIAL_SUPER_ADMIN_PASSWORD="initialSuperAdminPassword"
+```
+
+Export initial super admin credentials if running in locally
+```bash
+export INITIAL_SUPER_ADMIN_USERNAME=superAdmin
+export INITIAL_SUPER_ADMIN_PASSWORD=initialSuperAdminPassword
+```
 
 ## Contributing
 
