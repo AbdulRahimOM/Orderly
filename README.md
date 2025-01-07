@@ -47,33 +47,6 @@ Orderly is a robust backend system built with Go that handles order processing a
 - PostgreSQL 14 or higher
 - Make (optional, for using Makefile commands)
 
-## Project Structure
-```bash
-orderly/
-├── cmd/ # Application entry points
-│   └── api/ # Main application
-├── internal/ # Internal application code
-│   ├── api/ # API layer
-│   │   ├── controls/ # API controls: Price management
-│   │   ├── handler/ # HTTP request handlers
-│   │   ├── middleware/ # HTTP middlewares
-│   │   └── routes/ # Route definitions
-│   ├── domain/ # Business entities
-│   ├── infrastructure/ # External implementations
-│   │   ├── config/ # Configuration
-│   │   ├── db/ # Database setup
-│   │   └── di/ # Dependency injection
-│   ├── repository/ # Data access layer
-│   │   ├── interface/ # Repository interfaces
-│   └── usecase/ # Business logic
-│       ├── interface/ # Use case interfaces
-└── pkg/ # Public libraries
-    ├── jwt-token/ # JWT token handling
-    ├── twilio/ # Twilio integration
-    ├── utils/ # Utility functions
-    └── validation/ # Validation utilities
-```
-
 ## API Documentation
 ### Browse Endpoints (public)
 - 📄 `GET /browse/category` - List categories
@@ -160,6 +133,33 @@ orderly/
 - 🔍 `GET /user/order/:id` - Get user order details
 - ➕ `POST /user/order` - Create order
 - 🚫 `PATCH /user/order/cancel/:id` - Cancel order
+
+## Project Structure
+```bash
+orderly/
+├── cmd/ # Application entry points
+│   └── api/ # Main application
+├── internal/ # Internal application code
+│   ├── api/ # API layer
+│   │   ├── controls/ # API controls: Price management
+│   │   ├── handler/ # HTTP request handlers
+│   │   ├── middleware/ # HTTP middlewares
+│   │   └── routes/ # Route definitions
+│   ├── domain/ # Business entities
+│   ├── infrastructure/ # External implementations
+│   │   ├── config/ # Configuration
+│   │   ├── db/ # Database setup
+│   │   └── di/ # Dependency injection
+│   ├── repository/ # Data access layer
+│   │   ├── interface/ # Repository interfaces
+│   └── usecase/ # Business logic
+│       ├── interface/ # Use case interfaces
+└── pkg/ # Public libraries
+    ├── jwt-token/ # JWT token handling
+    ├── twilio/ # Twilio integration
+    ├── utils/ # Utility functions
+    └── validation/ # Validation utilities
+```
 
 ## Getting Started
 
